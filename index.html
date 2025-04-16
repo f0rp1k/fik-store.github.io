@@ -45,9 +45,6 @@
       max-width: 100%;
       border-radius: 10px;
     }
-    .produk h2 {
-      margin-top: 0;
-    }
     button {
       background: #0b60b0;
       color: white;
@@ -62,25 +59,6 @@
       padding: 1rem;
       background: #eee;
       margin-top: 2rem;
-    }
-    .checkout-area {
-      margin-top: 1rem;
-    }
-    select, input[type="file"] {
-      margin-top: 0.5rem;
-      padding: 0.4rem;
-      width: 100%;
-    }
-    .metode {
-      display: none;
-      margin-top: 0.5rem;
-      background: #f1f1f1;
-      padding: 0.5rem;
-      border-radius: 5px;
-    }
-    .metode img {
-      max-width: 200px;
-      display: block;
     }
     .rating {
       margin-top: 1rem;
@@ -107,6 +85,37 @@
       padding: 0.5rem;
       border-radius: 5px;
     }
+    .checkout-popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkout-content {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .checkout-content img {
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 10px;
+    }
+    .close-btn {
+      background: red;
+      margin-top: 1rem;
+    }
+    select, input[type="file"] {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -115,117 +124,116 @@
     <h1>FIK STORE</h1>
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
   </header>
+
   <main>
+    <!-- Produk 1 -->
+    <section class="produk">
+      <h2>Pterodactyl Bot WhatsApp</h2>
+      <img src="produk1.png" alt="Bot WA">
+      <p>Bot WhatsApp terintegrasi dengan Pterodactyl Panel.</p>
+      <ul>
+        <li>5GB - Rp2.000</li>
+        <li>6GB - Rp3.000</li>
+        <li>7GB - Rp4.000</li>
+        <li>8GB - Rp5.000</li>
+        <li>9GB - Rp6.000</li>
+        <li>10GB - Rp7.000</li>
+        <li>Unlimited - Rp8.000</li>
+      </ul>
+      <button onclick="bukaCheckout('Pterodactyl Bot WhatsApp')">Checkout</button>
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk1">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
+    </section>
 
-    <!-- Daftar Produk -->
-    <div id="produk-container"></div>
+    <!-- Produk 2 -->
+    <section class="produk">
+      <h2>Admin Panel (ADP)</h2>
+      <img src="produk2.png" alt="Admin Panel">
+      <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
+      <p>Harga: Rp15.000 / bulan</p>
+      <button onclick="bukaCheckout('Admin Panel')">Checkout</button>
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk2">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
+    </section>
 
+    <!-- Produk 3 -->
+    <section class="produk">
+      <h2>Reseller Panel</h2>
+      <img src="produk3.png" alt="Reseller Panel">
+      <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
+      <p>Harga: Rp10.000 / bulan</p>
+      <button onclick="bukaCheckout('Reseller Panel')">Checkout</button>
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk3">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
+    </section>
   </main>
+
+  <div class="checkout-popup" id="popup">
+    <div class="checkout-content">
+      <h3>Checkout</h3>
+      <p id="produk-nama"></p>
+      <select id="metode" onchange="gantiMetode()">
+        <option value="">Pilih Metode Pembayaran</option>
+        <option value="qris">QRIS</option>
+        <option value="dana">Dana</option>
+        <option value="gopay">GoPay</option>
+      </select>
+      <div id="output"></div>
+      <input type="file" id="bukti">
+      <a id="kirimWA" href="#" target="_blank"><button>Kirim Bukti ke WhatsApp</button></a>
+      <button class="close-btn" onclick="tutupPopup()">Tutup</button>
+    </div>
+  </div>
+
   <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
   </footer>
 
   <script>
-    const produkList = [
-      {
-        id: "produk1",
-        nama: "Pterodactyl Bot WhatsApp",
-        gambar: "produk1.png",
-        deskripsi: "Bot WhatsApp terintegrasi dengan Pterodactyl Panel.",
-        harga: "Rp2.000 - Rp8.000"
-      },
-      {
-        id: "produk2",
-        nama: "Admin Panel (ADP)",
-        gambar: "produk2.png",
-        deskripsi: "Panel admin berbasis web untuk manajemen pengguna dan transaksi.",
-        harga: "Rp15.000 / bulan"
-      },
-      {
-        id: "produk3",
-        nama: "Reseller Panel",
-        gambar: "produk3.png",
-        deskripsi: "Panel khusus reseller untuk jualan ulang layanan FIK STORE.",
-        harga: "Rp10.000 / bulan"
-      }
-    ];
+    const ratings = {};
 
-    const container = document.getElementById("produk-container");
-
-    produkList.forEach((p) => {
-      container.innerHTML += `
-      <section class="produk">
-        <h2>${p.nama}</h2>
-        <img src="${p.gambar}" alt="${p.nama}">
-        <p>${p.deskripsi}</p>
-        <p>Harga: ${p.harga}</p>
-        <div class="checkout-area">
-          <label for="bayar-${p.id}">Pilih Metode Pembayaran:</label>
-          <select id="bayar-${p.id}" onchange="tampilMetode('${p.id}')">
-            <option value="">-- Pilih --</option>
-            <option value="qris">QRIS</option>
-            <option value="dana">Dana</option>
-            <option value="gopay">GoPay</option>
-          </select>
-          <div class="metode" id="metode-${p.id}"></div>
-          <input type="file" id="bukti-${p.id}" accept="image/*" />
-          <button onclick="kirimBukti('${p.nama}', '${p.id}')">Kirim ke WhatsApp</button>
-        </div>
-        <div class="rating">
-          <h4>Beri Rating</h4>
-          <div class="stars" data-produk="${p.id}">
-            <span data-rate="1">&#9733;</span>
-            <span data-rate="2">&#9733;</span>
-            <span data-rate="3">&#9733;</span>
-            <span data-rate="4">&#9733;</span>
-            <span data-rate="5">&#9733;</span>
-          </div>
-          <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-          <button onclick="kirimRating(this)">Kirim</button>
-          <div class="hasil-rating"></div>
-        </div>
-      </section>
-      `;
-    });
-
-    function tampilMetode(id) {
-      const pilih = document.getElementById("bayar-" + id).value;
-      const area = document.getElementById("metode-" + id);
-      if (pilih === "qris") {
-        area.innerHTML = `<img src="qris.png" alt="QRIS">`;
-      } else if (pilih === "dana") {
-        area.innerHTML = `<p>Nomor Dana: 087811955247</p>`;
-      } else if (pilih === "gopay") {
-        area.innerHTML = `<p>Nomor GoPay: 087811955247</p>`;
-      } else {
-        area.innerHTML = "";
-      }
-      area.style.display = pilih ? "block" : "none";
-    }
-
-    function kirimBukti(namaProduk, id) {
-      const fileInput = document.getElementById("bukti-" + id);
-      if (!fileInput.files.length) {
-        alert("Silakan upload bukti transfer!");
-        return;
-      }
-      const pesan = `Halo, saya sudah transfer untuk produk *${namaProduk}*. Berikut bukti transfer saya.`;
-      const url = `https://wa.me/6287734818302?text=${encodeURIComponent(pesan)}`;
-      window.open(url, "_blank");
-    }
-
-    // Rating logic
-    let ratings = {};
-    document.addEventListener("click", function(e) {
-      if (e.target.matches(".stars span")) {
-        const span = e.target;
-        const produkId = span.parentElement.dataset.produk;
-        const rate = parseInt(span.dataset.rate);
+    document.querySelectorAll('.stars span').forEach(star => {
+      star.addEventListener('click', () => {
+        const produkId = star.parentElement.dataset.produk;
+        const rate = parseInt(star.dataset.rate);
         ratings[produkId] = { rate: rate };
-        span.parentElement.querySelectorAll("span").forEach(s => {
-          s.classList.toggle("active", parseInt(s.dataset.rate) <= rate);
+        star.parentElement.querySelectorAll('span').forEach(s => {
+          s.classList.toggle('active', parseInt(s.dataset.rate) <= rate);
         });
-      }
+      });
     });
 
     function kirimRating(btn) {
@@ -244,6 +252,38 @@
       output.innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
       ratingBox.querySelector('.komentar').value = '';
       starsDiv.querySelectorAll('span').forEach(s => s.classList.remove('active'));
+    }
+
+    let produkDipilih = '';
+
+    function bukaCheckout(nama) {
+      produkDipilih = nama;
+      document.getElementById('produk-nama').textContent = 'Produk: ' + nama;
+      document.getElementById('popup').style.display = 'flex';
+      document.getElementById('output').innerHTML = '';
+      document.getElementById('metode').value = '';
+    }
+
+    function tutupPopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+
+    function gantiMetode() {
+      const metode = document.getElementById('metode').value;
+      const output = document.getElementById('output');
+
+      if (metode === 'qris') {
+        output.innerHTML = '<img src="qris.png" alt="QRIS">';
+      } else if (metode === 'dana') {
+        output.innerHTML = '<p>Nomor Dana: 087811955247</p>';
+      } else if (metode === 'gopay') {
+        output.innerHTML = '<p>Nomor GoPay: 087811955247</p>';
+      } else {
+        output.innerHTML = '';
+      }
+
+      const linkWA = `https://wa.me/6287734818302?text=Halo,%20saya%20mau%20checkout%20produk%20${encodeURIComponent(produkDipilih)}%20dengan%20metode%20${metode}.%20Berikut%20bukti%20pembayarannya.`;
+      document.getElementById('kirimWA').href = linkWA;
     }
   </script>
 </body>
