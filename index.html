@@ -48,9 +48,6 @@
     .produk h2 {
       margin-top: 0;
     }
-    ul {
-      padding-left: 1.2rem;
-    }
     button {
       background: #0b60b0;
       color: white;
@@ -58,12 +55,38 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-top: 0.5rem;
     }
     footer {
       text-align: center;
       padding: 1rem;
       background: #eee;
       margin-top: 2rem;
+    }
+    .rating {
+      margin-top: 1rem;
+    }
+    .stars span {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .stars span.active {
+      color: gold;
+    }
+    textarea.komentar {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    .hasil-rating {
+      margin-top: 1rem;
+      background: #f1f1f1;
+      padding: 0.5rem;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -73,8 +96,9 @@
     <h1>FIK STORE</h1>
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
   </header>
-
   <main>
+
+    <!-- Produk 1 -->
     <section class="produk">
       <h2>Pterodactyl Bot WhatsApp</h2>
       <img src="produk1.png" alt="Bot WA">
@@ -88,35 +112,115 @@
         <li>10GB - Rp7.000</li>
         <li>Unlimited - Rp8.000</li>
       </ul>
-      <button onclick="checkout('Pterodactyl Bot WhatsApp')">Tambah ke Keranjang</button>
+      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Pterodactyl%20Bot%20WhatsApp.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
+        <button>Checkout via WhatsApp</button>
+      </a>
+
+      <!-- Rating Produk 1 -->
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk1">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
     </section>
 
+    <!-- Produk 2 -->
     <section class="produk">
       <h2>Admin Panel (ADP)</h2>
       <img src="produk2.png" alt="Admin Panel">
       <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
       <p>Harga: Rp15.000 / bulan</p>
-      <button onclick="checkout('Admin Panel (ADP)')">Tambah ke Keranjang</button>
+      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Admin%20Panel.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
+        <button>Checkout via WhatsApp</button>
+      </a>
+
+      <!-- Rating Produk 2 -->
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk2">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
     </section>
 
+    <!-- Produk 3 -->
     <section class="produk">
       <h2>Reseller Panel</h2>
       <img src="produk3.png" alt="Reseller Panel">
       <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
       <p>Harga: Rp10.000 / bulan</p>
-      <button onclick="checkout('Reseller Panel')">Tambah ke Keranjang</button>
-    </section>
-  </main>
+      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Reseller%20Panel.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
+        <button>Checkout via WhatsApp</button>
+      </a>
 
+      <!-- Rating Produk 3 -->
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk3">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
+    </section>
+
+  </main>
   <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
   </footer>
 
   <script>
-    function checkout(namaProduk) {
-      let pesan = `Halo, saya mau beli Produk ${namaProduk}.%0ANama: [isi nama]%0ANomor WhatsApp: [isi nomor]`;
-      window.open(`https://wa.me/6287734818302?text=${pesan}`, "_blank");
+    const starsAll = document.querySelectorAll('.stars span');
+    let ratings = {};
+
+    starsAll.forEach(star => {
+      star.addEventListener('click', () => {
+        const produkId = star.parentElement.dataset.produk;
+        const rate = parseInt(star.dataset.rate);
+        ratings[produkId] = { rate: rate };
+        star.parentElement.querySelectorAll('span').forEach(s => {
+          s.classList.toggle('active', parseInt(s.dataset.rate) <= rate);
+        });
+      });
+    });
+
+    function kirimRating(btn) {
+      const ratingBox = btn.parentElement;
+      const starsDiv = ratingBox.querySelector('.stars');
+      const komentar = ratingBox.querySelector('.komentar').value;
+      const produkId = starsDiv.dataset.produk;
+      const rating = ratings[produkId]?.rate || 0;
+
+      if (!rating || !komentar) {
+        alert('Silakan beri rating dan komentar.');
+        return;
+      }
+
+      const output = ratingBox.querySelector('.hasil-rating');
+      output.innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
+      ratingBox.querySelector('.komentar').value = '';
+      starsDiv.querySelectorAll('span').forEach(s => s.classList.remove('active'));
     }
   </script>
 </body>
-</html>
+            </html>
