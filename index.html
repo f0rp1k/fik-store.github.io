@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -57,12 +56,6 @@
       cursor: pointer;
       margin-top: 0.5rem;
     }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #eee;
-      margin-top: 2rem;
-    }
     .rating {
       margin-top: 1rem;
     }
@@ -88,6 +81,20 @@
       padding: 0.5rem;
       border-radius: 5px;
     }
+    .checkout-section {
+      margin-top: 1rem;
+    }
+    .checkout-options {
+      margin-bottom: 0.5rem;
+    }
+    .checkout-display {
+      display: none;
+      margin-top: 0.5rem;
+    }
+    .checkout-display img {
+      max-width: 200px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -97,8 +104,6 @@
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
   </header>
   <main>
-
-    <!-- Produk 1 -->
     <section class="produk">
       <h2>Pterodactyl Bot WhatsApp</h2>
       <img src="produk1.png" alt="Bot WA">
@@ -111,93 +116,48 @@
         <li>9GB - Rp6.000</li>
         <li>10GB - Rp7.000</li>
         <li>Unlimited - Rp8.000</li>
-      </ul>
-      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Pterodactyl%20Bot%20WhatsApp.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
-        <button>Checkout via WhatsApp</button>
-      </a>
+      </ul><div class="checkout-section">
+    <label class="checkout-options">
+      Metode Pembayaran:
+      <select onchange="showMetode(this, 'produk1')">
+        <option value="">-- Pilih --</option>
+        <option value="qris">QRIS</option>
+        <option value="dana">Dana</option>
+        <option value="gopay">GoPay</option>
+      </select>
+    </label>
+    <div class="checkout-display" id="checkout-produk1"></div>
+    <input type="file" accept="image/*" onchange="handleUpload(this, 'produk1')" />
+    <a id="wa-link-produk1" target="_blank">
+      <button>Kirim ke WhatsApp</button>
+    </a>
+  </div>
 
-      <!-- Rating Produk 1 -->
-      <div class="rating">
-        <h4>Beri Rating</h4>
-        <div class="stars" data-produk="produk1">
-          <span data-rate="1">&#9733;</span>
-          <span data-rate="2">&#9733;</span>
-          <span data-rate="3">&#9733;</span>
-          <span data-rate="4">&#9733;</span>
-          <span data-rate="5">&#9733;</span>
-        </div>
-        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-        <button onclick="kirimRating(this)">Kirim</button>
-        <div class="hasil-rating"></div>
-      </div>
-    </section>
-
-    <!-- Produk 2 -->
-    <section class="produk">
-      <h2>Admin Panel (ADP)</h2>
-      <img src="produk2.png" alt="Admin Panel">
-      <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
-      <p>Harga: Rp15.000 / bulan</p>
-      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Admin%20Panel.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
-        <button>Checkout via WhatsApp</button>
-      </a>
-
-      <!-- Rating Produk 2 -->
-      <div class="rating">
-        <h4>Beri Rating</h4>
-        <div class="stars" data-produk="produk2">
-          <span data-rate="1">&#9733;</span>
-          <span data-rate="2">&#9733;</span>
-          <span data-rate="3">&#9733;</span>
-          <span data-rate="4">&#9733;</span>
-          <span data-rate="5">&#9733;</span>
-        </div>
-        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-        <button onclick="kirimRating(this)">Kirim</button>
-        <div class="hasil-rating"></div>
-      </div>
-    </section>
-
-    <!-- Produk 3 -->
-    <section class="produk">
-      <h2>Reseller Panel</h2>
-      <img src="produk3.png" alt="Reseller Panel">
-      <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
-      <p>Harga: Rp10.000 / bulan</p>
-      <a href="https://wa.me/6287734818302?text=Halo,%20saya%20mau%20beli%20Produk%20Reseller%20Panel.%20Nama:%20[Nama%20Anda]%20Nomor:%20[Nomor%20Anda]" target="_blank">
-        <button>Checkout via WhatsApp</button>
-      </a>
-
-      <!-- Rating Produk 3 -->
-      <div class="rating">
-        <h4>Beri Rating</h4>
-        <div class="stars" data-produk="produk3">
-          <span data-rate="1">&#9733;</span>
-          <span data-rate="2">&#9733;</span>
-          <span data-rate="3">&#9733;</span>
-          <span data-rate="4">&#9733;</span>
-          <span data-rate="5">&#9733;</span>
-        </div>
-        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-        <button onclick="kirimRating(this)">Kirim</button>
-        <div class="hasil-rating"></div>
-      </div>
-    </section>
+  <div class="rating">
+    <h4>Beri Rating</h4>
+    <div class="stars" data-produk="produk1">
+      <span data-rate="1">&#9733;</span>
+      <span data-rate="2">&#9733;</span>
+      <span data-rate="3">&#9733;</span>
+      <span data-rate="4">&#9733;</span>
+      <span data-rate="5">&#9733;</span>
+    </div>
+    <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+    <button onclick="kirimRating(this)">Kirim</button>
+    <div class="hasil-rating"></div>
+  </div>
+</section>
 
   </main>
   <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
-  </footer>
-
-  <script>
-    const starsAll = document.querySelectorAll('.stars span');
-    let ratings = {};
-
-    starsAll.forEach(star => {
+  </footer>  <script>
+    const ratings = {};
+    document.querySelectorAll('.stars span').forEach(star => {
       star.addEventListener('click', () => {
         const produkId = star.parentElement.dataset.produk;
         const rate = parseInt(star.dataset.rate);
-        ratings[produkId] = { rate: rate };
+        ratings[produkId] = { rate };
         star.parentElement.querySelectorAll('span').forEach(s => {
           s.classList.toggle('active', parseInt(s.dataset.rate) <= rate);
         });
@@ -205,22 +165,46 @@
     });
 
     function kirimRating(btn) {
-      const ratingBox = btn.parentElement;
-      const starsDiv = ratingBox.querySelector('.stars');
-      const komentar = ratingBox.querySelector('.komentar').value;
+      const box = btn.parentElement;
+      const starsDiv = box.querySelector('.stars');
+      const komentar = box.querySelector('.komentar').value;
       const produkId = starsDiv.dataset.produk;
       const rating = ratings[produkId]?.rate || 0;
-
       if (!rating || !komentar) {
         alert('Silakan beri rating dan komentar.');
         return;
       }
-
-      const output = ratingBox.querySelector('.hasil-rating');
-      output.innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
-      ratingBox.querySelector('.komentar').value = '';
+      box.querySelector('.hasil-rating').innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
+      box.querySelector('.komentar').value = '';
       starsDiv.querySelectorAll('span').forEach(s => s.classList.remove('active'));
     }
-  </script>
-</body>
-            </html>
+
+    function showMetode(select, produkId) {
+      const val = select.value;
+      const container = document.getElementById('checkout-' + produkId);
+      let isi = '';
+      if (val === 'qris') {
+        isi = '<p>Scan QRIS:</p><img src="qr-fikstore.png" alt="QRIS">';
+      } else if (val === 'dana') {
+        isi = '<p>No. Dana: 087811955247</p>';
+      } else if (val === 'gopay') {
+        isi = '<p>No. GoPay: 087811955247</p>';
+      }
+      container.innerHTML = isi;
+      container.style.display = val ? 'block' : 'none';
+    }
+
+    function handleUpload(input, produkId) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const waLink = document.getElementById('wa-link-' + produkId);
+          const msg = encodeURIComponent(`Halo, saya telah membayar untuk produk ${produkId}. Bukti transfer: ${reader.result}`);
+          waLink.href = `https://wa.me/6287734818302?text=${msg}`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script></body>
+</html>
