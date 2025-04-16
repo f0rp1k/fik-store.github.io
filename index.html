@@ -156,9 +156,9 @@
         <option value="gopay">GoPay</option>
       </select>
 
-      <img id="qris-img" src="qris.png" alt="QRIS">
+      <img id="qris-img" src="" alt="QRIS">
       <div id="download-qris">
-        <a href="qris.png" download="qris_fikstore.png">
+        <a id="qris-link" href="" download="qris_fikstore.png">
           <button>Download Gambar</button>
         </a>
       </div>
@@ -178,6 +178,7 @@
 <script>
   let produkDipilih = "";
   let perluPilihPaket = false;
+  let paketTerpilih = "";
 
   function showCheckout(namaProduk, butuhPaket) {
     document.getElementById("checkout").style.display = "block";
@@ -197,6 +198,7 @@
 
   function tampilPaket() {
     const paket = document.getElementById("paket").value;
+    paketTerpilih = paket;
     if (paket !== "") {
       produkDipilih = "Bot WhatsApp - " + paket;
       document.getElementById("metode-section").style.display = "block";
@@ -207,8 +209,32 @@
 
   function tampilMetode() {
     const metode = document.getElementById("metode").value;
-    document.getElementById("qris-img").style.display = metode === "qris" ? "block" : "none";
-    document.getElementById("download-qris").style.display = metode === "qris" ? "block" : "none";
+    const qrisImg = document.getElementById("qris-img");
+    const qrisLink = document.getElementById("qris-link");
+
+    // Tentukan QRIS berdasarkan produk/paket
+    let qrFile = "";
+
+    if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
+    else if (produkDipilih.includes("6GB")) qrFile = "qr2.png";
+    else if (produkDipilih.includes("7GB")) qrFile = "qr3.png";
+    else if (produkDipilih.includes("8GB")) qrFile = "qr4.png";
+    else if (produkDipilih.includes("9GB")) qrFile = "qr5.png";
+    else if (produkDipilih.includes("10GB")) qrFile = "qr6.png";
+    else if (produkDipilih.includes("Unlimited")) qrFile = "qr7.png";
+    else if (produkDipilih.includes("Admin Panel")) qrFile = "qr_admin.png";
+    else if (produkDipilih.includes("Reseller")) qrFile = "qr_reseller.png";
+
+    if (metode === "qris") {
+      qrisImg.src = qrFile;
+      qrisImg.style.display = "block";
+      qrisLink.href = qrFile;
+      document.getElementById("download-qris").style.display = "block";
+    } else {
+      qrisImg.style.display = "none";
+      document.getElementById("download-qris").style.display = "none";
+    }
+
     document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
   }
 
