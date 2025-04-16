@@ -2,27 +2,111 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FIK STORE</title>
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; background: #f9f9f9; color: #333; }
-    header { background: #0b60b0; color: white; padding: 1rem; text-align: center; }
-    .logo { height: 60px; margin-bottom: 0.5rem; }
-    .wa-button { background: #25d366; color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; }
-    main { padding: 1rem; }
-    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-    .produk img { max-width: 100%; border-radius: 10px; }
-    button, select, input[type="file"] {
-      background: #0b60b0; color: white; padding: 0.5rem 1rem;
-      border: none; border-radius: 5px; cursor: pointer; margin-top: 0.5rem;
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
     }
-    select, input[type="file"] { background: white; color: #333; }
-    .rating { margin-top: 1rem; }
-    .stars span { font-size: 1.5rem; cursor: pointer; color: #ccc; }
-    .stars span.active { color: gold; }
-    textarea.komentar { width: 100%; padding: 0.5rem; margin-top: 0.5rem; border-radius: 5px; border: 1px solid #ccc; resize: vertical; }
-    .hasil-rating { margin-top: 1rem; background: #f1f1f1; padding: 0.5rem; border-radius: 5px; }
-    footer { text-align: center; padding: 1rem; background: #eee; margin-top: 2rem; }
+    header {
+      background: #0b60b0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .logo {
+      height: 60px;
+      margin-bottom: 0.5rem;
+    }
+    .wa-button {
+      display: inline-block;
+      background: #25d366;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+    main {
+      padding: 1rem;
+    }
+    .produk {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .produk img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .produk h2 {
+      margin-top: 0;
+    }
+    button {
+      background: #0b60b0;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #eee;
+      margin-top: 2rem;
+    }
+    .checkout-area {
+      margin-top: 1rem;
+    }
+    select, input[type="file"] {
+      margin-top: 0.5rem;
+      padding: 0.4rem;
+      width: 100%;
+    }
+    .metode {
+      display: none;
+      margin-top: 0.5rem;
+      background: #f1f1f1;
+      padding: 0.5rem;
+      border-radius: 5px;
+    }
+    .metode img {
+      max-width: 200px;
+      display: block;
+    }
+    .rating {
+      margin-top: 1rem;
+    }
+    .stars span {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .stars span.active {
+      color: gold;
+    }
+    textarea.komentar {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    .hasil-rating {
+      margin-top: 1rem;
+      background: #f1f1f1;
+      padding: 0.5rem;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -31,63 +115,117 @@
     <h1>FIK STORE</h1>
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
   </header>
-
   <main>
-    <!-- Produk 1 -->
-    <section class="produk">
-      <h2>Pterodactyl Bot WhatsApp</h2>
-      <img src="produk1.png" alt="Bot WA">
-      <p>Bot WhatsApp terintegrasi dengan Pterodactyl Panel.</p>
-      <p>Harga: Rp2.000 - Rp8.000</p>
 
-      <label for="metode1">Pilih Metode Pembayaran:</label>
-      <select id="metode1" onchange="tampilkanPembayaran(this, '1')">
-        <option value="">-- Pilih --</option>
-        <option value="qris">QRIS</option>
-        <option value="dana">Dana</option>
-        <option value="gopay">GoPay</option>
-      </select>
+    <!-- Daftar Produk -->
+    <div id="produk-container"></div>
 
-      <div id="infoPembayaran1" style="margin-top: 1rem;"></div>
-      <img id="qrisImage1" src="qris.png" alt="QRIS" style="display:none; max-width: 100%; margin-top: 1rem;">
-
-      <input type="file" id="bukti1" accept="image/*">
-      <button onclick="kirimBukti('1')">Kirim Bukti ke WhatsApp</button>
-
-      <!-- Rating -->
-      <div class="rating">
-        <h4>Beri Rating</h4>
-        <div class="stars" data-produk="produk1">
-          <span data-rate="1">&#9733;</span>
-          <span data-rate="2">&#9733;</span>
-          <span data-rate="3">&#9733;</span>
-          <span data-rate="4">&#9733;</span>
-          <span data-rate="5">&#9733;</span>
-        </div>
-        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-        <button onclick="kirimRating(this)">Kirim</button>
-        <div class="hasil-rating"></div>
-      </div>
-    </section>
   </main>
-
   <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
   </footer>
 
   <script>
-    // Rating
-    const starsAll = document.querySelectorAll('.stars span');
+    const produkList = [
+      {
+        id: "produk1",
+        nama: "Pterodactyl Bot WhatsApp",
+        gambar: "produk1.png",
+        deskripsi: "Bot WhatsApp terintegrasi dengan Pterodactyl Panel.",
+        harga: "Rp2.000 - Rp8.000"
+      },
+      {
+        id: "produk2",
+        nama: "Admin Panel (ADP)",
+        gambar: "produk2.png",
+        deskripsi: "Panel admin berbasis web untuk manajemen pengguna dan transaksi.",
+        harga: "Rp15.000 / bulan"
+      },
+      {
+        id: "produk3",
+        nama: "Reseller Panel",
+        gambar: "produk3.png",
+        deskripsi: "Panel khusus reseller untuk jualan ulang layanan FIK STORE.",
+        harga: "Rp10.000 / bulan"
+      }
+    ];
+
+    const container = document.getElementById("produk-container");
+
+    produkList.forEach((p) => {
+      container.innerHTML += `
+      <section class="produk">
+        <h2>${p.nama}</h2>
+        <img src="${p.gambar}" alt="${p.nama}">
+        <p>${p.deskripsi}</p>
+        <p>Harga: ${p.harga}</p>
+        <div class="checkout-area">
+          <label for="bayar-${p.id}">Pilih Metode Pembayaran:</label>
+          <select id="bayar-${p.id}" onchange="tampilMetode('${p.id}')">
+            <option value="">-- Pilih --</option>
+            <option value="qris">QRIS</option>
+            <option value="dana">Dana</option>
+            <option value="gopay">GoPay</option>
+          </select>
+          <div class="metode" id="metode-${p.id}"></div>
+          <input type="file" id="bukti-${p.id}" accept="image/*" />
+          <button onclick="kirimBukti('${p.nama}', '${p.id}')">Kirim ke WhatsApp</button>
+        </div>
+        <div class="rating">
+          <h4>Beri Rating</h4>
+          <div class="stars" data-produk="${p.id}">
+            <span data-rate="1">&#9733;</span>
+            <span data-rate="2">&#9733;</span>
+            <span data-rate="3">&#9733;</span>
+            <span data-rate="4">&#9733;</span>
+            <span data-rate="5">&#9733;</span>
+          </div>
+          <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+          <button onclick="kirimRating(this)">Kirim</button>
+          <div class="hasil-rating"></div>
+        </div>
+      </section>
+      `;
+    });
+
+    function tampilMetode(id) {
+      const pilih = document.getElementById("bayar-" + id).value;
+      const area = document.getElementById("metode-" + id);
+      if (pilih === "qris") {
+        area.innerHTML = `<img src="qris.png" alt="QRIS">`;
+      } else if (pilih === "dana") {
+        area.innerHTML = `<p>Nomor Dana: 087811955247</p>`;
+      } else if (pilih === "gopay") {
+        area.innerHTML = `<p>Nomor GoPay: 087811955247</p>`;
+      } else {
+        area.innerHTML = "";
+      }
+      area.style.display = pilih ? "block" : "none";
+    }
+
+    function kirimBukti(namaProduk, id) {
+      const fileInput = document.getElementById("bukti-" + id);
+      if (!fileInput.files.length) {
+        alert("Silakan upload bukti transfer!");
+        return;
+      }
+      const pesan = `Halo, saya sudah transfer untuk produk *${namaProduk}*. Berikut bukti transfer saya.`;
+      const url = `https://wa.me/6287734818302?text=${encodeURIComponent(pesan)}`;
+      window.open(url, "_blank");
+    }
+
+    // Rating logic
     let ratings = {};
-    starsAll.forEach(star => {
-      star.addEventListener('click', () => {
-        const produkId = star.parentElement.dataset.produk;
-        const rate = parseInt(star.dataset.rate);
+    document.addEventListener("click", function(e) {
+      if (e.target.matches(".stars span")) {
+        const span = e.target;
+        const produkId = span.parentElement.dataset.produk;
+        const rate = parseInt(span.dataset.rate);
         ratings[produkId] = { rate: rate };
-        star.parentElement.querySelectorAll('span').forEach(s => {
-          s.classList.toggle('active', parseInt(s.dataset.rate) <= rate);
+        span.parentElement.querySelectorAll("span").forEach(s => {
+          s.classList.toggle("active", parseInt(s.dataset.rate) <= rate);
         });
-      });
+      }
     });
 
     function kirimRating(btn) {
@@ -96,44 +234,16 @@
       const komentar = ratingBox.querySelector('.komentar').value;
       const produkId = starsDiv.dataset.produk;
       const rating = ratings[produkId]?.rate || 0;
+
       if (!rating || !komentar) {
         alert('Silakan beri rating dan komentar.');
         return;
       }
+
       const output = ratingBox.querySelector('.hasil-rating');
       output.innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
       ratingBox.querySelector('.komentar').value = '';
       starsDiv.querySelectorAll('span').forEach(s => s.classList.remove('active'));
-    }
-
-    // Tampilkan QRIS / Nomor
-    function tampilkanPembayaran(selectEl, id) {
-      const metode = selectEl.value;
-      const info = document.getElementById('infoPembayaran' + id);
-      const qris = document.getElementById('qrisImage' + id);
-      qris.style.display = 'none';
-      if (metode === 'qris') {
-        qris.style.display = 'block';
-        info.innerHTML = '';
-      } else if (metode === 'dana') {
-        info.innerHTML = 'Nomor Dana: <strong>087811955247</strong>';
-      } else if (metode === 'gopay') {
-        info.innerHTML = 'Nomor GoPay: <strong>087811955247</strong>';
-      } else {
-        info.innerHTML = '';
-      }
-    }
-
-    // Kirim bukti ke WA
-    function kirimBukti(id) {
-      const input = document.getElementById('bukti' + id);
-      const file = input.files[0];
-      if (!file) {
-        alert('Silakan upload bukti transfer.');
-        return;
-      }
-      const link = 'https://wa.me/6287734818302?text=Halo,%20saya%20sudah%20melakukan%20pembayaran%20untuk%20produk%20ke-' + id + '.%20Berikut%20bukti%20transfernya.';
-      window.open(link, '_blank');
     }
   </script>
 </body>
