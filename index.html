@@ -16,7 +16,6 @@
       color: white;
       padding: 1rem;
       text-align: center;
-      position: relative;
     }
     header .logo {
       height: 100px;
@@ -39,10 +38,6 @@
       padding: 1rem;
       margin-bottom: 1.5rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-    }
-    .produk:hover {
-      transform: translateY(-5px);
     }
     .produk img {
       max-width: 100%;
@@ -86,139 +81,200 @@
       margin-top: 2rem;
       font-size: 0.9rem;
       color: #888;
-    }
-    #keranjang-container {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      display: none;
-      z-index: 99;
-      max-width: 300px;
-      animation: slideIn 0.3s ease forwards;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    #keranjang-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: #ff6347;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 100;
-    }
-    .badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: yellow;
-      color: black;
-      font-weight: bold;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-    .toast {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      background: #333;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      opacity: 0;
-      animation: fadeInOut 3s ease forwards;
-    }
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(10px); }
-      10% { opacity: 1; transform: translateY(0); }
-      90% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(10px); }
-    }
+    }/* Spinner style */
+#loading-spinner {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #0b60b0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
   </style>
 </head>
-<body>
-  <button id="keranjang-btn" onclick="toggleKeranjang()">
-    🛒<span class="badge" id="keranjang-count">0</span>
-  </button>
-  <div id="keranjang-container">
-    <h4>Keranjang</h4>
-    <ul id="keranjang-list"></ul>
-    <button onclick="checkoutKeranjang()">Checkout</button>
-  </div>  <!-- Toast -->  <div id="toast" class="toast" style="display:none;">Produk ditambahkan</div>  <!-- Sisa elemen dan script halaman tetap ada -->  <!-- Tambahkan script keranjang di akhir body -->  <script>
-    let keranjang = JSON.parse(localStorage.getItem('keranjang')) || [];
+<body><div id="loading-spinner">
+  <div class="spinner"></div>
+</div><header>
+  <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
+  <h1>FIK STORE</h1>
+  <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
+</header><main>  <!-- Produk 1 -->  <section class="produk">
+    <h2>Pterodactyl Bot WhatsApp</h2>
+    <img src="produk1.png" alt="Bot WA">
+    <p>Bot WhatsApp terintegrasi dengan Pterodactyl Panel.</p>
+    <ul>
+      <li>5GB - Rp2.000</li>
+      <li>6GB - Rp3.000</li>
+      <li>7GB - Rp4.000</li>
+      <li>8GB - Rp5.000</li>
+      <li>9GB - Rp6.000</li>
+      <li>10GB - Rp7.000</li>
+      <li>Unlimited - Rp8.000</li>
+    </ul>
+    <button onclick="showCheckout('Bot WhatsApp', true)">Checkout</button>
+  </section>  <!-- Produk 2 -->  <section class="produk">
+    <h2>Admin Panel (ADP)</h2>
+    <img src="produk2.png" alt="Admin Panel">
+    <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
+    <p>Harga: Rp15.000 / bulan</p>
+    <button onclick="showCheckout('Admin Panel (ADP)', false)">Checkout</button>
+  </section>  <!-- Produk 3 -->  <section class="produk">
+    <h2>Reseller Panel</h2>
+    <img src="produk3.png" alt="Reseller Panel">
+    <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
+    <p>Harga: Rp10.000 / bulan</p>
+    <button onclick="showCheckout('Reseller Panel', false)">Checkout</button>
+  </section>  <!-- Checkout Section -->  <div id="checkout" class="produk" style="display:none;">
+    <h2>Checkout</h2>
+    <p id="produk-terpilih"></p>
+    <input type="text" id="nama" placeholder="Nama Anda">
+    <input type="tel" id="nomor" placeholder="Nomor WhatsApp"><select id="paket" style="display:none;" onchange="tampilPaket()">
+  <option value="">Pilih Paket</option>
+  <option value="5GB - Rp2.000">5GB - Rp2.000</option>
+  <option value="6GB - Rp3.000">6GB - Rp3.000</option>
+  <option value="7GB - Rp4.000">7GB - Rp4.000</option>
+  <option value="8GB - Rp5.000">8GB - Rp5.000</option>
+  <option value="9GB - Rp6.000">9GB - Rp6.000</option>
+  <option value="10GB - Rp7.000">10GB - Rp7.000</option>
+  <option value="Unlimited - Rp8.000">Unlimited - Rp8.000</option>
+</select>
 
-    function simpanKeranjang() {
-      localStorage.setItem('keranjang', JSON.stringify(keranjang));
-      renderKeranjang();
+<div id="metode-section" style="display:none;">
+  <select id="metode" onchange="tampilMetode()">
+    <option value="">Pilih Metode Pembayaran</option>
+    <option value="qris">QRIS</option>
+    <option value="dana">Dana</option>
+    <option value="gopay">GoPay</option>
+  </select>
+
+  <img id="qris-img" src="" alt="QRIS">
+  <div id="download-qris">
+    <a id="qris-link" href="" download="qris_fikstore.png">
+      <button>Download Gambar</button>
+    </a>
+  </div>
+  <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
+  <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
+
+  <input type="file" id="bukti">
+  <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
+</div>
+
+  </div></main><footer>
+  &copy; FIK STORE | FIK OFFICIAL
+</footer><script>
+  let produkDipilih = "";
+  let perluPilihPaket = false;
+  let paketTerpilih = "";
+
+  window.addEventListener("load", function () {
+    document.getElementById("loading-spinner").style.display = "none";
+  });
+
+  function showCheckout(namaProduk, butuhPaket) {
+    document.getElementById("checkout").style.display = "block";
+    document.getElementById("produk-terpilih").innerText = "Produk: " + namaProduk;
+    produkDipilih = namaProduk;
+    perluPilihPaket = butuhPaket;
+
+    document.getElementById("paket").style.display = butuhPaket ? "block" : "none";
+    document.getElementById("paket").value = "";
+    document.getElementById("metode-section").style.display = butuhPaket ? "none" : "block";
+    document.getElementById("qris-img").style.display = "none";
+    document.getElementById("download-qris").style.display = "none";
+    document.getElementById("nomor-tujuan").style.display = "none";
+    document.getElementById("total-pembayaran").innerText = !butuhPaket && namaProduk.includes("Admin Panel") ? "Total Pembayaran: Rp15.000"
+      : !butuhPaket && namaProduk.includes("Reseller") ? "Total Pembayaran: Rp10.000"
+      : "";
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  function tampilPaket() {
+    const paket = document.getElementById("paket").value;
+    paketTerpilih = paket;
+    const total = document.getElementById("total-pembayaran");
+
+    if (paket !== "") {
+      produkDipilih = "Bot WhatsApp - " + paket;
+      document.getElementById("metode-section").style.display = "block";
+      total.innerText = "Total Pembayaran: " + paket.split(" - ")[1];
+    } else {
+      document.getElementById("metode-section").style.display = "none";
+      total.innerText = "";
+    }
+  }
+
+  function tampilMetode() {
+    const metode = document.getElementById("metode").value;
+    const qrisImg = document.getElementById("qris-img");
+    const qrisLink = document.getElementById("qris-link");
+
+    let qrFile = "";
+
+    if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
+    else if (produkDipilih.includes("6GB")) qrFile = "qr2.png";
+    else if (produkDipilih.includes("7GB")) qrFile = "qr3.png";
+    else if (produkDipilih.includes("8GB")) qrFile = "qr4.png";
+    else if (produkDipilih.includes("9GB")) qrFile = "qr5.png";
+    else if (produkDipilih.includes("10GB")) qrFile = "qr6.png";
+    else if (produkDipilih.includes("Unlimited")) qrFile = "qr7.png";
+    else if (produkDipilih.includes("Admin Panel")) qrFile = "qr_admin.png";
+    else if (produkDipilih.includes("Reseller")) qrFile = "qr_reseller.png";
+
+    if (metode === "qris") {
+      qrisImg.src = qrFile;
+      qrisImg.style.display = "block";
+      qrisLink.href = qrFile;
+      document.getElementById("download-qris").style.display = "block";
+    } else {
+      qrisImg.style.display = "none";
+      document.getElementById("download-qris").style.display = "none";
     }
 
-    function tambahKeKeranjang(produk) {
-      keranjang.push(produk);
-      simpanKeranjang();
-      tampilkanToast('Produk berhasil ditambahkan ke keranjang!');
+    document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
+  }
+
+  function kirimWhatsApp() {
+    const spinner = document.getElementById("loading-spinner");
+    spinner.style.display = "flex";
+
+    const nama = document.getElementById("nama").value;
+    const nomor = document.getElementById("nomor").value;
+    const metode = document.getElementById("metode").value;
+    const bukti = document.getElementById("bukti").files[0];
+
+    if (!nama || !nomor || !metode || !bukti) {
+      spinner.style.display = "none";
+      alert("Dimohon untuk isi semua data dan unggah bukti transfer.");
+      return;
     }
 
-    function renderKeranjang() {
-      const list = document.getElementById('keranjang-list');
-      const badge = document.getElementById('keranjang-count');
-      list.innerHTML = '';
-      badge.textContent = keranjang.length;
-      keranjang.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerText = item;
-        const btn = document.createElement('button');
-        btn.innerText = 'X';
-        btn.style.marginLeft = '10px';
-        btn.onclick = () => {
-          keranjang.splice(index, 1);
-          simpanKeranjang();
-        };
-        li.appendChild(btn);
-        list.appendChild(li);
-      });
-    }
+    const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
+    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bukti transfer saya.`;
 
-    function toggleKeranjang() {
-      const box = document.getElementById('keranjang-container');
-      box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
-    }
-
-    function tampilkanToast(pesan) {
-      const toast = document.getElementById('toast');
-      toast.textContent = pesan;
-      toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
-    }
-
-    function checkoutKeranjang() {
-      if (keranjang.length === 0) {
-        alert("Keranjang masih kosong!");
-        return;
-      }
-      alert("Silakan checkout manual dengan menyebutkan produk berikut:\n" + keranjang.join("\n"));
-    }
-
-    // Tambahkan contoh tombol (bisa kamu sesuaikan sesuai produk aslinya)
-    // contoh: <button onclick="tambahKeKeranjang('Admin Panel (ADP)')">Tambah ke Keranjang</button>
-
-    // Render ulang saat halaman dibuka kembali
-    renderKeranjang();
-  </script></body>
+    const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
+    
+    setTimeout(() => {
+      spinner.style.display = "none";
+      window.open(link, "_blank");
+    }, 1000); // simulasi delay 1 detik
+  }
+</script></body>
 </html>
