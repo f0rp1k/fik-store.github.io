@@ -71,6 +71,10 @@
       display: none;
       margin: 1rem auto;
     }
+    #download-qris {
+      display: none;
+      text-align: center;
+    }
     footer {
       text-align: center;
       padding: 1rem;
@@ -141,6 +145,11 @@
     </select>
     
     <img id="qris-img" src="qris.png" alt="QRIS">
+    <div id="download-qris">
+      <a href="qris.png" download="qris_fikstore.png">
+        <button>Download Gambar</button>
+      </a>
+    </div>
     <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
     
     <input type="file" id="bukti">
@@ -167,8 +176,10 @@
     const metode = document.getElementById("metode").value;
     const qris = document.getElementById("qris-img");
     const nomor = document.getElementById("nomor-tujuan");
+    const downloadBtn = document.getElementById("download-qris");
 
     qris.style.display = (metode === "qris") ? "block" : "none";
+    downloadBtn.style.display = (metode === "qris") ? "block" : "none";
     nomor.style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
   }
 
@@ -189,7 +200,7 @@
     }
 
     const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
-    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bikti transfer saya.`;
+    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bukti transfer saya.`;
 
     const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
     window.open(link, "_blank");
