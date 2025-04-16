@@ -151,7 +151,7 @@
     <div id="metode-section" style="display:none;">
       <select id="metode" onchange="tampilMetode()">
         <option value="">Pilih Metode Pembayaran</option>
-        <option value="qris">QRIS</option>
+        <option value="qris">QRIS (QR Generator)</option>
         <option value="dana">Dana</option>
         <option value="gopay">GoPay</option>
       </select>
@@ -220,22 +220,15 @@
     const qrisImg = document.getElementById("qris-img");
     const qrisLink = document.getElementById("qris-link");
 
-    let qrFile = "";
-
-    if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
-    else if (produkDipilih.includes("6GB")) qrFile = "qr2.png";
-    else if (produkDipilih.includes("7GB")) qrFile = "qr3.png";
-    else if (produkDipilih.includes("8GB")) qrFile = "qr4.png";
-    else if (produkDipilih.includes("9GB")) qrFile = "qr5.png";
-    else if (produkDipilih.includes("10GB")) qrFile = "qr6.png";
-    else if (produkDipilih.includes("Unlimited")) qrFile = "qr7.png";
-    else if (produkDipilih.includes("Admin Panel")) qrFile = "qr_admin.png";
-    else if (produkDipilih.includes("Reseller")) qrFile = "qr_reseller.png";
+    let dataQR = "";
 
     if (metode === "qris") {
-      qrisImg.src = qrFile;
+      dataQR = `FIK STORE - ${produkDipilih} - Hubungi: 087811955247`;
+      const qrURL = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(dataQR)}&size=200x200`;
+
+      qrisImg.src = qrURL;
       qrisImg.style.display = "block";
-      qrisLink.href = qrFile;
+      qrisLink.href = qrURL;
       document.getElementById("download-qris").style.display = "block";
     } else {
       qrisImg.style.display = "none";
