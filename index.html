@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,6 +48,9 @@
     .produk h2 {
       margin-top: 0;
     }
+    ul {
+      padding-left: 1.2rem;
+    }
     button {
       background: #0b60b0;
       color: white;
@@ -68,7 +72,9 @@
     <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
     <h1>FIK STORE</h1>
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
-  </header>  <main>
+  </header>
+
+  <main>
     <section class="produk">
       <h2>Pterodactyl Bot WhatsApp</h2>
       <img src="produk1.png" alt="Bot WA">
@@ -82,25 +88,35 @@
         <li>10GB - Rp7.000</li>
         <li>Unlimited - Rp8.000</li>
       </ul>
-      <button>Tambah ke Keranjang</button>
-    </section><section class="produk">
-  <h2>Admin Panel (ADP)</h2>
-  <img src="produk2.png" alt="Admin Panel">
-  <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
-  <p>Harga: Rp15.000 / bulan</p>
-  <button>Tambah ke Keranjang</button>
-</section>
+      <button onclick="checkout('Pterodactyl Bot WhatsApp')">Tambah ke Keranjang</button>
+    </section>
 
-<section class="produk">
-  <h2>Reseller Panel</h2>
-  <img src="produk3.png" alt="Reseller Panel">
-  <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
-  <p>Harga: Rp10.000 / bulan</p>
-  <button>Tambah ke Keranjang</button>
-</section>
+    <section class="produk">
+      <h2>Admin Panel (ADP)</h2>
+      <img src="produk2.png" alt="Admin Panel">
+      <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
+      <p>Harga: Rp15.000 / bulan</p>
+      <button onclick="checkout('Admin Panel (ADP)')">Tambah ke Keranjang</button>
+    </section>
 
-  </main>  <footer>
+    <section class="produk">
+      <h2>Reseller Panel</h2>
+      <img src="produk3.png" alt="Reseller Panel">
+      <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
+      <p>Harga: Rp10.000 / bulan</p>
+      <button onclick="checkout('Reseller Panel')">Tambah ke Keranjang</button>
+    </section>
+  </main>
+
+  <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
   </footer>
+
+  <script>
+    function checkout(namaProduk) {
+      let pesan = `Halo, saya mau beli Produk ${namaProduk}.%0ANama: [isi nama]%0ANomor WhatsApp: [isi nomor]`;
+      window.open(`https://wa.me/6287734818302?text=${pesan}`, "_blank");
+    }
+  </script>
 </body>
 </html>
