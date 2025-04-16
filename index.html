@@ -6,144 +6,193 @@
   <title>FIK STORE</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       margin: 0;
       padding: 0;
+      background: #f9f9f9;
+      color: #333;
     }
     header {
-      text-align: center;
-      background-color: #007bff;
+      background: #0b60b0;
       color: white;
-      padding: 20px;
+      padding: 1rem;
+      text-align: center;
     }
-    header img {
-      width: 80px;
-      vertical-align: middle;
+    header .logo {
+      height: 100px;
     }
     header h1 {
-      display: inline;
-      font-size: 28px;
-      margin-left: 10px;
+      margin: 0.5rem 0 0.2rem;
     }
-    header p {
-      margin-top: 5px;
-      font-size: 14px;
+    header a {
+      color: white;
+      text-decoration: underline;
+      display: inline-block;
+      margin-top: 0.3rem;
+    }
+    main {
+      padding: 1rem;
     }
     .produk {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-    }
-    .card {
-      border: 1px solid #ccc;
+      background: white;
       border-radius: 10px;
-      margin: 10px;
-      padding: 15px;
-      max-width: 250px;
-      text-align: center;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-    .card img {
+    .produk img {
       max-width: 100%;
       border-radius: 10px;
     }
-    .form-section {
-      padding: 20px;
-      text-align: center;
+    .produk h2 {
+      margin-top: 0;
     }
-    input, select, button {
-      margin: 10px;
-      padding: 10px;
-      width: 90%;
-      max-width: 300px;
-      font-size: 16px;
+    button {
+      background: #0b60b0;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
     }
-    #pembayaranInfo {
-      margin-top: 10px;
+    .checkout-box {
+      margin-top: 1rem;
+    }
+    select, input[type="file"], input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #qris-img {
+      width: 200px;
+      display: none;
+      margin: 1rem auto;
     }
     footer {
       text-align: center;
-      padding: 20px;
-      background-color: #f2f2f2;
+      padding: 1rem;
+      background: #eee;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <img src="logo-fikstore.png" alt="Logo FIK STORE">
+  <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
   <h1>FIK STORE</h1>
-  <p>Customer Service</p>
+  <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
 </header>
 
-<section class="produk">
-  <div class="card">
-    <img src="produk1.png" alt="Produk 1">
-    <h3>Paket 5GB</h3>
-    <p>Harga: Rp5.000</p>
-  </div>
-  <div class="card">
-    <img src="produk2.png" alt="Produk 2">
-    <h3>Paket 6GB</h3>
-    <p>Harga: Rp6.000</p>
-  </div>
-  <div class="card">
-    <img src="produk3.png" alt="Produk 3">
-    <h3>Reseller Panel</h3>
-    <p>Rp10.000 / bulan</p>
-  </div>
-</section>
+<main>
 
-<section class="form-section">
-  <button onclick="showForm()">Checkout</button>
+  <!-- Produk 1 -->
+  <section class="produk">
+    <h2>Pterodactyl Bot WhatsApp</h2>
+    <img src="produk1.png" alt="Bot WA">
+    <p>Bot WhatsApp terintegrasi dengan Pterodactyl Panel.</p>
+    <ul>
+      <li>5GB - Rp2.000</li>
+      <li>6GB - Rp3.000</li>
+      <li>7GB - Rp4.000</li>
+      <li>8GB - Rp5.000</li>
+      <li>9GB - Rp6.000</li>
+      <li>10GB - Rp7.000</li>
+      <li>Unlimited - Rp8.000</li>
+    </ul>
+    <button onclick="showCheckout('Bot WhatsApp')">Checkout</button>
+  </section>
 
-  <div id="checkoutForm" style="display:none;">
-    <input type="text" id="nama" placeholder="Nama">
-    <input type="text" id="wa" placeholder="Nomor WhatsApp">
-    <select id="metode" onchange="tampilkanMetode()">
+  <!-- Produk 2 -->
+  <section class="produk">
+    <h2>Admin Panel (ADP)</h2>
+    <img src="produk2.png" alt="Admin Panel">
+    <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
+    <p>Harga: Rp15.000 / bulan</p>
+    <button onclick="showCheckout('Admin Panel (ADP)')">Checkout</button>
+  </section>
+
+  <!-- Produk 3 -->
+  <section class="produk">
+    <h2>Reseller Panel</h2>
+    <img src="produk3.png" alt="Reseller Panel">
+    <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
+    <p>Harga: Rp10.000 / bulan</p>
+    <button onclick="showCheckout('Reseller Panel')">Checkout</button>
+  </section>
+
+  <!-- Checkout Section -->
+  <div id="checkout" class="produk" style="display:none;">
+    <h2>Checkout</h2>
+    <p id="produk-terpilih"></p>
+    <input type="text" id="nama" placeholder="Nama Anda">
+    <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
+    
+    <select id="metode" onchange="tampilMetode()">
       <option value="">Pilih Metode Pembayaran</option>
       <option value="qris">QRIS</option>
       <option value="dana">Dana</option>
       <option value="gopay">GoPay</option>
     </select>
-
-    <div id="pembayaranInfo"></div>
-
+    
+    <img id="qris-img" src="qris.png" alt="QRIS">
+    <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
+    
     <input type="file" id="bukti">
-    <button onclick="kirimWhatsApp()">Kirim Bukti ke Admin</button>
+    <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
   </div>
-</section>
+
+</main>
 
 <footer>
-  © FIK STORE | FIK OFFICIAL.
+  &copy; 2025 FIK STORE
 </footer>
 
 <script>
-  function showForm() {
-    document.getElementById("checkoutForm").style.display = "block";
+  let produkDipilih = "";
+
+  function showCheckout(namaProduk) {
+    document.getElementById("checkout").style.display = "block";
+    document.getElementById("produk-terpilih").innerText = "Produk: " + namaProduk;
+    produkDipilih = namaProduk;
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
-  function tampilkanMetode() {
+  function tampilMetode() {
     const metode = document.getElementById("metode").value;
-    const div = document.getElementById("pembayaranInfo");
-    if (metode === "qris") {
-      div.innerHTML = '<img src="qris.png" alt="QRIS" style="max-width: 200px;">';
-    } else if (metode === "dana") {
-      div.innerHTML = '<p>Nomor Dana: <b>087811955247</b></p>';
-    } else if (metode === "gopay") {
-      div.innerHTML = '<p>Nomor GoPay: <b>087811955247</b></p>';
-    } else {
-      div.innerHTML = "";
-    }
+    const qris = document.getElementById("qris-img");
+    const nomor = document.getElementById("nomor-tujuan");
+
+    qris.style.display = (metode === "qris") ? "block" : "none";
+    nomor.style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
   }
 
   function kirimWhatsApp() {
     const nama = document.getElementById("nama").value;
-    const wa = document.getElementById("wa").value;
+    const nomor = document.getElementById("nomor").value;
     const metode = document.getElementById("metode").value;
-    const url = `https://wa.me/6287811955247?text=Halo admin, saya ${nama} (${wa}) ingin checkout menggunakan metode ${metode}. Bukti transfer akan dikirim.`;
 
-    window.open(url, "_blank");
+    if (!nama || !nomor || !metode) {
+      alert("Isi semua data terlebih dahulu.");
+      return;
+    }
+
+    const bukti = document.getElementById("bukti").files[0];
+    if (!bukti) {
+      alert("Unggah bukti transfer terlebih dahulu.");
+      return;
+    }
+
+    const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
+    const pesan = `Halo Admin, saya ingin checkout:\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPembayaran via: ${metodeText}\n\nBerikut bikti transfer saya.`;
+
+    const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
+    window.open(link, "_blank");
   }
 </script>
 
