@@ -1,100 +1,28 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FIK STORE</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #f9f9f9; color: #333; }
+    header { background: #0b60b0; color: white; padding: 1rem; text-align: center; }
+    .logo { height: 60px; margin-bottom: 0.5rem; }
+    .wa-button { background: #25d366; color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; }
+    main { padding: 1rem; }
+    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    .produk img { max-width: 100%; border-radius: 10px; }
+    button, select, input[type="file"] {
+      background: #0b60b0; color: white; padding: 0.5rem 1rem;
+      border: none; border-radius: 5px; cursor: pointer; margin-top: 0.5rem;
     }
-    header {
-      background: #0b60b0;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    .logo {
-      height: 60px;
-      margin-bottom: 0.5rem;
-    }
-    .wa-button {
-      display: inline-block;
-      background: #25d366;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      text-decoration: none;
-      margin-top: 1rem;
-    }
-    main {
-      padding: 1rem;
-    }
-    .produk {
-      background: white;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    .produk img {
-      max-width: 100%;
-      border-radius: 10px;
-    }
-    .produk h2 {
-      margin-top: 0;
-    }
-    button {
-      background: #0b60b0;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    .rating {
-      margin-top: 1rem;
-    }
-    .stars span {
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #ccc;
-    }
-    .stars span.active {
-      color: gold;
-    }
-    textarea.komentar {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      resize: vertical;
-    }
-    .hasil-rating {
-      margin-top: 1rem;
-      background: #f1f1f1;
-      padding: 0.5rem;
-      border-radius: 5px;
-    }
-    .checkout-section {
-      margin-top: 1rem;
-    }
-    .checkout-options {
-      margin-bottom: 0.5rem;
-    }
-    .checkout-display {
-      display: none;
-      margin-top: 0.5rem;
-    }
-    .checkout-display img {
-      max-width: 200px;
-      border-radius: 10px;
-    }
+    select, input[type="file"] { background: white; color: #333; }
+    .rating { margin-top: 1rem; }
+    .stars span { font-size: 1.5rem; cursor: pointer; color: #ccc; }
+    .stars span.active { color: gold; }
+    textarea.komentar { width: 100%; padding: 0.5rem; margin-top: 0.5rem; border-radius: 5px; border: 1px solid #ccc; resize: vertical; }
+    .hasil-rating { margin-top: 1rem; background: #f1f1f1; padding: 0.5rem; border-radius: 5px; }
+    footer { text-align: center; padding: 1rem; background: #eee; margin-top: 2rem; }
   </style>
 </head>
 <body>
@@ -103,61 +31,59 @@
     <h1>FIK STORE</h1>
     <a href="https://wa.me/6287734818302" class="wa-button">Chat WhatsApp</a>
   </header>
+
   <main>
+    <!-- Produk 1 -->
     <section class="produk">
       <h2>Pterodactyl Bot WhatsApp</h2>
       <img src="produk1.png" alt="Bot WA">
       <p>Bot WhatsApp terintegrasi dengan Pterodactyl Panel.</p>
-      <ul>
-        <li>5GB - Rp2.000</li>
-        <li>6GB - Rp3.000</li>
-        <li>7GB - Rp4.000</li>
-        <li>8GB - Rp5.000</li>
-        <li>9GB - Rp6.000</li>
-        <li>10GB - Rp7.000</li>
-        <li>Unlimited - Rp8.000</li>
-      </ul><div class="checkout-section">
-    <label class="checkout-options">
-      Metode Pembayaran:
-      <select onchange="showMetode(this, 'produk1')">
+      <p>Harga: Rp2.000 - Rp8.000</p>
+
+      <label for="metode1">Pilih Metode Pembayaran:</label>
+      <select id="metode1" onchange="tampilkanPembayaran(this, '1')">
         <option value="">-- Pilih --</option>
         <option value="qris">QRIS</option>
         <option value="dana">Dana</option>
         <option value="gopay">GoPay</option>
       </select>
-    </label>
-    <div class="checkout-display" id="checkout-produk1"></div>
-    <input type="file" accept="image/*" onchange="handleUpload(this, 'produk1')" />
-    <a id="wa-link-produk1" target="_blank">
-      <button>Kirim ke WhatsApp</button>
-    </a>
-  </div>
 
-  <div class="rating">
-    <h4>Beri Rating</h4>
-    <div class="stars" data-produk="produk1">
-      <span data-rate="1">&#9733;</span>
-      <span data-rate="2">&#9733;</span>
-      <span data-rate="3">&#9733;</span>
-      <span data-rate="4">&#9733;</span>
-      <span data-rate="5">&#9733;</span>
-    </div>
-    <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
-    <button onclick="kirimRating(this)">Kirim</button>
-    <div class="hasil-rating"></div>
-  </div>
-</section>
+      <div id="infoPembayaran1" style="margin-top: 1rem;"></div>
+      <img id="qrisImage1" src="qris.png" alt="QRIS" style="display:none; max-width: 100%; margin-top: 1rem;">
 
+      <input type="file" id="bukti1" accept="image/*">
+      <button onclick="kirimBukti('1')">Kirim Bukti ke WhatsApp</button>
+
+      <!-- Rating -->
+      <div class="rating">
+        <h4>Beri Rating</h4>
+        <div class="stars" data-produk="produk1">
+          <span data-rate="1">&#9733;</span>
+          <span data-rate="2">&#9733;</span>
+          <span data-rate="3">&#9733;</span>
+          <span data-rate="4">&#9733;</span>
+          <span data-rate="5">&#9733;</span>
+        </div>
+        <textarea placeholder="Tulis komentarmu..." class="komentar"></textarea>
+        <button onclick="kirimRating(this)">Kirim</button>
+        <div class="hasil-rating"></div>
+      </div>
+    </section>
   </main>
+
   <footer>
     <p>&copy; 2025 FIK STORE. All rights reserved.</p>
-  </footer>  <script>
-    const ratings = {};
-    document.querySelectorAll('.stars span').forEach(star => {
+  </footer>
+
+  <script>
+    // Rating
+    const starsAll = document.querySelectorAll('.stars span');
+    let ratings = {};
+    starsAll.forEach(star => {
       star.addEventListener('click', () => {
         const produkId = star.parentElement.dataset.produk;
         const rate = parseInt(star.dataset.rate);
-        ratings[produkId] = { rate };
+        ratings[produkId] = { rate: rate };
         star.parentElement.querySelectorAll('span').forEach(s => {
           s.classList.toggle('active', parseInt(s.dataset.rate) <= rate);
         });
@@ -165,46 +91,50 @@
     });
 
     function kirimRating(btn) {
-      const box = btn.parentElement;
-      const starsDiv = box.querySelector('.stars');
-      const komentar = box.querySelector('.komentar').value;
+      const ratingBox = btn.parentElement;
+      const starsDiv = ratingBox.querySelector('.stars');
+      const komentar = ratingBox.querySelector('.komentar').value;
       const produkId = starsDiv.dataset.produk;
       const rating = ratings[produkId]?.rate || 0;
       if (!rating || !komentar) {
         alert('Silakan beri rating dan komentar.');
         return;
       }
-      box.querySelector('.hasil-rating').innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
-      box.querySelector('.komentar').value = '';
+      const output = ratingBox.querySelector('.hasil-rating');
+      output.innerHTML = `<p><strong>Rating:</strong> ${rating} bintang</p><p><strong>Komentar:</strong> ${komentar}</p>`;
+      ratingBox.querySelector('.komentar').value = '';
       starsDiv.querySelectorAll('span').forEach(s => s.classList.remove('active'));
     }
 
-    function showMetode(select, produkId) {
-      const val = select.value;
-      const container = document.getElementById('checkout-' + produkId);
-      let isi = '';
-      if (val === 'qris') {
-        isi = '<p>Scan QRIS:</p><img src="qr-fikstore.png" alt="QRIS">';
-      } else if (val === 'dana') {
-        isi = '<p>No. Dana: 087811955247</p>';
-      } else if (val === 'gopay') {
-        isi = '<p>No. GoPay: 087811955247</p>';
+    // Tampilkan QRIS / Nomor
+    function tampilkanPembayaran(selectEl, id) {
+      const metode = selectEl.value;
+      const info = document.getElementById('infoPembayaran' + id);
+      const qris = document.getElementById('qrisImage' + id);
+      qris.style.display = 'none';
+      if (metode === 'qris') {
+        qris.style.display = 'block';
+        info.innerHTML = '';
+      } else if (metode === 'dana') {
+        info.innerHTML = 'Nomor Dana: <strong>087811955247</strong>';
+      } else if (metode === 'gopay') {
+        info.innerHTML = 'Nomor GoPay: <strong>087811955247</strong>';
+      } else {
+        info.innerHTML = '';
       }
-      container.innerHTML = isi;
-      container.style.display = val ? 'block' : 'none';
     }
 
-    function handleUpload(input, produkId) {
+    // Kirim bukti ke WA
+    function kirimBukti(id) {
+      const input = document.getElementById('bukti' + id);
       const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const waLink = document.getElementById('wa-link-' + produkId);
-          const msg = encodeURIComponent(`Halo, saya telah membayar untuk produk ${produkId}. Bukti transfer: ${reader.result}`);
-          waLink.href = `https://wa.me/6287734818302?text=${msg}`;
-        };
-        reader.readAsDataURL(file);
+      if (!file) {
+        alert('Silakan upload bukti transfer.');
+        return;
       }
+      const link = 'https://wa.me/6287734818302?text=Halo,%20saya%20sudah%20melakukan%20pembayaran%20untuk%20produk%20ke-' + id + '.%20Berikut%20bukti%20transfernya.';
+      window.open(link, '_blank');
     }
-  </script></body>
+  </script>
+</body>
 </html>
