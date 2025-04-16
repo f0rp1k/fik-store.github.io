@@ -1,115 +1,151 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FIK STORE</title>
   <style>
-    body { font-family: sans-serif; margin: 0; background: #f9f9f9; color: #333; }
-    header { background: #0b60b0; color: white; padding: 1rem; text-align: center; }
-    .logo { height: 60px; margin-bottom: 0.5rem; }
-    main { padding: 1rem; }
-    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-    .produk img { max-width: 100%; border-radius: 10px; }
-    button { background: #0b60b0; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; margin-top: 0.5rem; }
-    footer { text-align: center; padding: 1rem; background: #eee; margin-top: 2rem; }
-    .form-checkout { margin-top: 1rem; display: none; }
-    .form-checkout select, .form-checkout input { display: block; margin-top: 0.5rem; padding: 0.5rem; width: 100%; border-radius: 5px; border: 1px solid #ccc; }
-    .form-checkout img.qr { max-width: 200px; display: none; margin-top: 1rem; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+    }
+    header img {
+      width: 80px;
+      vertical-align: middle;
+    }
+    header h1 {
+      display: inline;
+      font-size: 28px;
+      margin-left: 10px;
+    }
+    header p {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .produk {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 10px;
+      padding: 15px;
+      max-width: 250px;
+      text-align: center;
+    }
+    .card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .form-section {
+      padding: 20px;
+      text-align: center;
+    }
+    input, select, button {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
+      max-width: 300px;
+      font-size: 16px;
+    }
+    #pembayaranInfo {
+      margin-top: 10px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
-    <h1>FIK STORE</h1>
-  </header>
-  <main><!-- Produk Template -->
-<div id="produk-container"></div>
 
-  </main>
-  <footer>
-    <p>&copy; FIK STORE|FIK OFFICIAL. All rights reserved.</p>
-  </footer>  <script>
-    const produkData = [
-      {
-        nama: "Pterodactyl Bot WhatsApp",
-        img: "produk1.png",
-        deskripsi: "Bot WhatsApp terintegrasi dengan Pterodactyl Panel.",
-        harga: ["5GB - Rp2.000", "6GB - Rp3.000", "7GB - Rp4.000", "8GB - Rp5.000", "9GB - Rp6.000", "10GB - Rp7.000", "Unlimited - Rp8.000"]
-      },
-      {
-        nama: "Admin Panel (ADP)",
-        img: "produk2.png",
-        deskripsi: "Panel admin berbasis web untuk manajemen pengguna dan transaksi.",
-        harga: ["Rp15.000 / bulan"]
-      },
-      {
-        nama: "Reseller Panel",
-        img: "produk3.png",
-        deskripsi: "Panel khusus reseller untuk jualan ulang layanan FIK STORE.",
-        harga: ["Rp10.000 / bulan"]
-      }
-    ];
+<header>
+  <img src="logo-fikstore.png" alt="Logo FIK STORE">
+  <h1>FIK STORE</h1>
+  <p>Customer Service</p>
+</header>
 
-    const container = document.getElementById("produk-container");
+<section class="produk">
+  <div class="card">
+    <img src="produk1.png" alt="Produk 1">
+    <h3>Paket 5GB</h3>
+    <p>Harga: Rp5.000</p>
+  </div>
+  <div class="card">
+    <img src="produk2.png" alt="Produk 2">
+    <h3>Paket 6GB</h3>
+    <p>Harga: Rp6.000</p>
+  </div>
+  <div class="card">
+    <img src="produk3.png" alt="Produk 3">
+    <h3>Reseller Panel</h3>
+    <p>Rp10.000 / bulan</p>
+  </div>
+</section>
 
-    produkData.forEach((p, i) => {
-      const el = document.createElement("section");
-      el.className = "produk";
-      el.innerHTML = `
-        <h2>${p.nama}</h2>
-        <img src="${p.img}" alt="${p.nama}">
-        <p>${p.deskripsi}</p>
-        <ul>${p.harga.map(h => `<li>${h}</li>`).join("")}</ul>
-        <button onclick="showForm(${i})">Checkout Otomatis</button>
-        <div class="form-checkout" id="form${i}">
-          <input type="text" placeholder="Nama" id="nama${i}" required>
-          <input type="text" placeholder="Nomor WhatsApp" id="wa${i}" required>
-          <select onchange="handleMetode(${i})" id="metode${i}">
-            <option value="">Pilih Metode Pembayaran</option>
-            <option value="qris">QRIS</option>
-            <option value="dana">Dana</option>
-            <option value="gopay">GoPay</option>
-          </select>
-          <img src="qris.png" alt="QRIS" class="qr" id="qr${i}">
-          <div id="nomor${i}" style="margin-top:1rem;font-weight:bold;"></div>
-          <input type="file" accept="image/*" id="bukti${i}">
-          <button onclick="kirimWA(${i}, '${p.nama}')">Kirim Bukti ke Admin</button>
-        </div>
-      `;
-      container.appendChild(el);
-    });
+<section class="form-section">
+  <button onclick="showForm()">Checkout</button>
 
-    function showForm(i) {
-      document.getElementById(`form${i}`).style.display = 'block';
+  <div id="checkoutForm" style="display:none;">
+    <input type="text" id="nama" placeholder="Nama">
+    <input type="text" id="wa" placeholder="Nomor WhatsApp">
+    <select id="metode" onchange="tampilkanMetode()">
+      <option value="">Pilih Metode Pembayaran</option>
+      <option value="qris">QRIS</option>
+      <option value="dana">Dana</option>
+      <option value="gopay">GoPay</option>
+    </select>
+
+    <div id="pembayaranInfo"></div>
+
+    <input type="file" id="bukti">
+    <button onclick="kirimWhatsApp()">Kirim Bukti ke Admin</button>
+  </div>
+</section>
+
+<footer>
+  © FIK STORE | FIK OFFICIAL.
+</footer>
+
+<script>
+  function showForm() {
+    document.getElementById("checkoutForm").style.display = "block";
+  }
+
+  function tampilkanMetode() {
+    const metode = document.getElementById("metode").value;
+    const div = document.getElementById("pembayaranInfo");
+    if (metode === "qris") {
+      div.innerHTML = '<img src="qris.png" alt="QRIS" style="max-width: 200px;">';
+    } else if (metode === "dana") {
+      div.innerHTML = '<p>Nomor Dana: <b>087811955247</b></p>';
+    } else if (metode === "gopay") {
+      div.innerHTML = '<p>Nomor GoPay: <b>087811955247</b></p>';
+    } else {
+      div.innerHTML = "";
     }
+  }
 
-    function handleMetode(i) {
-      const metode = document.getElementById(`metode${i}`).value;
-      const qr = document.getElementById(`qr${i}`);
-      const nomor = document.getElementById(`nomor${i}`);
+  function kirimWhatsApp() {
+    const nama = document.getElementById("nama").value;
+    const wa = document.getElementById("wa").value;
+    const metode = document.getElementById("metode").value;
+    const url = `https://wa.me/6287811955247?text=Halo admin, saya ${nama} (${wa}) ingin checkout menggunakan metode ${metode}. Bukti transfer akan dikirim.`;
 
-      if (metode === 'qris') {
-        qr.style.display = 'block';
-        nomor.innerText = '';
-      } else {
-        qr.style.display = 'none';
-        nomor.innerText = metode === 'dana' || metode === 'gopay' ? `${metode.toUpperCase()}: 087811955247` : '';
-      }
-    }
+    window.open(url, "_blank");
+  }
+</script>
 
-    function kirimWA(i, namaProduk) {
-      const nama = document.getElementById(`nama${i}`).value;
-      const wa = document.getElementById(`wa${i}`).value;
-      const metode = document.getElementById(`metode${i}`).value;
-      const file = document.getElementById(`bukti${i}`).files[0];
-
-      if (!nama || !wa || !metode || !file) {
-        alert("Lengkapi semua data dan upload bukti transfer.");
-        return;
-      }
-
-      const link = `https://wa.me/6287734818302?text=Halo admin, saya ${nama} (${wa}) telah melakukan pembayaran untuk produk ${namaProduk} via ${metode}. Berikut bukti transfer nya.`;
-      window.open(link, '_blank');
-    }
-  </script></body>
+</body>
 </html>
