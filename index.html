@@ -163,6 +163,7 @@
         </a>
       </div>
       <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
+      <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
 
       <input type="file" id="bukti">
       <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
@@ -186,24 +187,31 @@
     produkDipilih = namaProduk;
     perluPilihPaket = butuhPaket;
 
-    // Reset
     document.getElementById("paket").style.display = butuhPaket ? "block" : "none";
     document.getElementById("paket").value = "";
     document.getElementById("metode-section").style.display = butuhPaket ? "none" : "block";
     document.getElementById("qris-img").style.display = "none";
     document.getElementById("download-qris").style.display = "none";
     document.getElementById("nomor-tujuan").style.display = "none";
+    document.getElementById("total-pembayaran").innerText = !butuhPaket && namaProduk.includes("Admin Panel") ? "Total Pembayaran: Rp15.000"
+      : !butuhPaket && namaProduk.includes("Reseller") ? "Total Pembayaran: Rp10.000"
+      : "";
+
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
   function tampilPaket() {
     const paket = document.getElementById("paket").value;
     paketTerpilih = paket;
+    const total = document.getElementById("total-pembayaran");
+
     if (paket !== "") {
       produkDipilih = "Bot WhatsApp - " + paket;
       document.getElementById("metode-section").style.display = "block";
+      total.innerText = "Total Pembayaran: " + paket.split(" - ")[1];
     } else {
       document.getElementById("metode-section").style.display = "none";
+      total.innerText = "";
     }
   }
 
@@ -212,7 +220,6 @@
     const qrisImg = document.getElementById("qris-img");
     const qrisLink = document.getElementById("qris-link");
 
-    // Tentukan QRIS berdasarkan produk/paket
     let qrFile = "";
 
     if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
