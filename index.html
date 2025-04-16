@@ -150,7 +150,7 @@
 </main>
 
 <footer>
-  &copy; 2025 FIK STORE
+  &copy; FIK STORE | FIK OFFICIAL
 </footer>
 
 <script>
@@ -178,18 +178,18 @@
     const metode = document.getElementById("metode").value;
 
     if (!nama || !nomor || !metode) {
-      alert("Isi semua data terlebih dahulu.");
+      alert("Dimohon untuk isi semua data terlebih dahulu.");
       return;
     }
 
     const bukti = document.getElementById("bukti").files[0];
     if (!bukti) {
-      alert("Unggah bukti transfer terlebih dahulu.");
+      alert("Dimohon untuk unggah bukti transfer terlebih dahulu.");
       return;
     }
 
     const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
-    const pesan = `Halo Admin, saya ingin checkout:\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPembayaran via: ${metodeText}\n\nBerikut bikti transfer saya.`;
+    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bikti transfer saya.`;
 
     const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
     window.open(link, "_blank");
