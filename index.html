@@ -109,7 +109,7 @@
       <li>10GB - Rp7.000</li>
       <li>Unlimited - Rp8.000</li>
     </ul>
-    <button onclick="showCheckout('Bot WhatsApp')">Checkout</button>
+    <button onclick="showCheckout('Bot WhatsApp', true)">Checkout</button>
   </section>
 
   <!-- Produk 2 -->
@@ -118,7 +118,7 @@
     <img src="produk2.png" alt="Admin Panel">
     <p>Panel admin berbasis web untuk manajemen pengguna dan transaksi.</p>
     <p>Harga: Rp15.000 / bulan</p>
-    <button onclick="showCheckout('Admin Panel (ADP)')">Checkout</button>
+    <button onclick="showCheckout('Admin Panel (ADP)', false)">Checkout</button>
   </section>
 
   <!-- Produk 3 -->
@@ -127,7 +127,7 @@
     <img src="produk3.png" alt="Reseller Panel">
     <p>Panel khusus reseller untuk jualan ulang layanan FIK STORE.</p>
     <p>Harga: Rp10.000 / bulan</p>
-    <button onclick="showCheckout('Reseller Panel')">Checkout</button>
+    <button onclick="showCheckout('Reseller Panel', false)">Checkout</button>
   </section>
 
   <!-- Checkout Section -->
@@ -137,23 +137,36 @@
     <input type="text" id="nama" placeholder="Nama Anda">
     <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
     
-    <select id="metode" onchange="tampilMetode()">
-      <option value="">Pilih Metode Pembayaran</option>
-      <option value="qris">QRIS</option>
-      <option value="dana">Dana</option>
-      <option value="gopay">GoPay</option>
+    <select id="paket" style="display:none;" onchange="tampilPaket()">
+      <option value="">Pilih Paket</option>
+      <option value="5GB - Rp2.000">5GB - Rp2.000</option>
+      <option value="6GB - Rp3.000">6GB - Rp3.000</option>
+      <option value="7GB - Rp4.000">7GB - Rp4.000</option>
+      <option value="8GB - Rp5.000">8GB - Rp5.000</option>
+      <option value="9GB - Rp6.000">9GB - Rp6.000</option>
+      <option value="10GB - Rp7.000">10GB - Rp7.000</option>
+      <option value="Unlimited - Rp8.000">Unlimited - Rp8.000</option>
     </select>
-    
-    <img id="qris-img" src="qris.png" alt="QRIS">
-    <div id="download-qris">
-      <a href="qris.png" download="qris_fikstore.png">
-        <button>Download Gambar</button>
-      </a>
+
+    <div id="metode-section" style="display:none;">
+      <select id="metode" onchange="tampilMetode()">
+        <option value="">Pilih Metode Pembayaran</option>
+        <option value="qris">QRIS</option>
+        <option value="dana">Dana</option>
+        <option value="gopay">GoPay</option>
+      </select>
+
+      <img id="qris-img" src="qris.png" alt="QRIS">
+      <div id="download-qris">
+        <a href="qris.png" download="qris_fikstore.png">
+          <button>Download Gambar</button>
+        </a>
+      </div>
+      <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
+
+      <input type="file" id="bukti">
+      <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
     </div>
-    <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
-    
-    <input type="file" id="bukti">
-    <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
   </div>
 
 </main>
@@ -164,23 +177,39 @@
 
 <script>
   let produkDipilih = "";
+  let perluPilihPaket = false;
 
-  function showCheckout(namaProduk) {
+  function showCheckout(namaProduk, butuhPaket) {
     document.getElementById("checkout").style.display = "block";
     document.getElementById("produk-terpilih").innerText = "Produk: " + namaProduk;
     produkDipilih = namaProduk;
+    perluPilihPaket = butuhPaket;
+
+    // Reset
+    document.getElementById("paket").style.display = butuhPaket ? "block" : "none";
+    document.getElementById("paket").value = "";
+    document.getElementById("metode-section").style.display = butuhPaket ? "none" : "block";
+    document.getElementById("qris-img").style.display = "none";
+    document.getElementById("download-qris").style.display = "none";
+    document.getElementById("nomor-tujuan").style.display = "none";
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  function tampilPaket() {
+    const paket = document.getElementById("paket").value;
+    if (paket !== "") {
+      produkDipilih = "Bot WhatsApp - " + paket;
+      document.getElementById("metode-section").style.display = "block";
+    } else {
+      document.getElementById("metode-section").style.display = "none";
+    }
   }
 
   function tampilMetode() {
     const metode = document.getElementById("metode").value;
-    const qris = document.getElementById("qris-img");
-    const nomor = document.getElementById("nomor-tujuan");
-    const downloadBtn = document.getElementById("download-qris");
-
-    qris.style.display = (metode === "qris") ? "block" : "none";
-    downloadBtn.style.display = (metode === "qris") ? "block" : "none";
-    nomor.style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
+    document.getElementById("qris-img").style.display = metode === "qris" ? "block" : "none";
+    document.getElementById("download-qris").style.display = metode === "qris" ? "block" : "none";
+    document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
   }
 
   function kirimWhatsApp() {
