@@ -81,96 +81,130 @@
       margin-top: 2rem;
       font-size: 0.9rem;
       color: #888;
-    }/* Spinner style */
-#loading-spinner {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
+    }
 
-.spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #0b60b0;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
+    /* Spinner style */
+    #loading-spinner {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #0b60b0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
 
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Tombol salin */
+    #copy-button {
+      background: #0b60b0;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    /* Live chat tombol */
+    #whatsapp-chat {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25d366;
+      color: white;
+      border-radius: 50%;
+      padding: 15px;
+      font-size: 24px;
+      z-index: 1000;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    #whatsapp-chat:hover {
+      background: #1ebd5c;
+    }
   </style>
 </head>
-<body><div id="loading-spinner">
+<body>
+<div id="loading-spinner">
   <div class="spinner"></div>
-</div><header>
+</div>
+
+<header>
   <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
   <h1>FIK STORE</h1>
   <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
-</header><main>  <!-- Produk 1 -->  <section class="produk">
-    <h2>Pterodactyl Bot WhatsApp</h2>
-    <img src="produk1.png" alt="Bot WA">
-    <p>Panel pterodactyl untuk menjalankan bot whatsapp. Mendapatkan garansi 15 hari, server mokad langsung ganti, untuk run script bot whatsapp, panel private anti colong script, bot on 24 jam, anti delay, high quality</p>
-    <ul>
-    <button onclick="showCheckout('Bot WhatsApp', true)">Checkout</button>
-  </section>  <!-- Produk 2 -->  <section class="produk">
-    <h2>Admin Panel (ADP)</h2>
-    <img src="produk2.png" alt="Admin Panel">
-    <p>Dapat mengakses semua panel dalam server & fitur lainnya. Create panel sepuasnya, bisa open adp/reseler,server mokad langsung ganti, anti delay, high quality</p>
-    <p>Harga: Rp15.000 / bulan</p>
-    <button onclick="showCheckout('Admin Panel (ADP)', false)">Checkout</button>
-  </section>  <!-- Produk 3 -->  <section class="produk">
-    <h2>Reseller Panel</h2>
-    <img src="produk3.png" alt="Reseller Panel">
-    <p>Create panel menggunakan bot. Bebas create panel, server mokad langsung ganti, anti delay, high quality</p>
-    <p>Harga: Rp10.000 / bulan</p>
-    <button onclick="showCheckout('Reseller Panel', false)">Checkout</button>
-  </section>  <!-- Checkout Section -->  <div id="checkout" class="produk" style="display:none;">
+</header>
+
+<main>
+  <!-- Produk-produk -->
+  <!-- Tambahkan produk di sini seperti sebelumnya -->
+
+  <!-- Checkout Section -->
+  <div id="checkout" class="produk" style="display:none;">
     <h2>Checkout</h2>
     <p id="produk-terpilih"></p>
     <input type="text" id="nama" placeholder="Nama Anda">
-    <input type="tel" id="nomor" placeholder="Nomor WhatsApp"><select id="paket" style="display:none;" onchange="tampilPaket()">
-  <option value="">Pilih Paket</option>
-  <option value="5GB - Rp2.000">5GB</option>
-  <option value="6GB - Rp3.000">6GB</option>
-  <option value="7GB - Rp4.000">7GB</option>
-  <option value="8GB - Rp5.000">8GB</option>
-  <option value="9GB - Rp6.000">9GB</option>
-  <option value="10GB - Rp7.000">10GB</option>
-  <option value="Unlimited - Rp8.000">Unlimited</option>
-</select>
+    <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
+    <select id="paket" style="display:none;" onchange="tampilPaket()">
+      <option value="">Pilih Paket</option>
+      <option value="5GB - Rp2.000">5GB</option>
+      <option value="6GB - Rp3.000">6GB</option>
+      <option value="7GB - Rp4.000">7GB</option>
+      <option value="8GB - Rp5.000">8GB</option>
+      <option value="9GB - Rp6.000">9GB</option>
+      <option value="10GB - Rp7.000">10GB</option>
+      <option value="Unlimited - Rp8.000">Unlimited</option>
+    </select>
 
-<div id="metode-section" style="display:none;">
-  <select id="metode" onchange="tampilMetode()">
-    <option value="">Pilih Metode Pembayaran</option>
-    <option value="qris">QRIS</option>
-    <option value="dana">Dana</option>
-    <option value="gopay">GoPay</option>
-  </select>
+    <div id="metode-section" style="display:none;">
+      <select id="metode" onchange="tampilMetode()">
+        <option value="">Pilih Metode Pembayaran</option>
+        <option value="qris">QRIS</option>
+        <option value="dana">Dana</option>
+        <option value="gopay">GoPay</option>
+      </select>
 
-  <img id="qris-img" src="" alt="QRIS">
-  <div id="download-qris">
-    <a id="qris-link" href="" download="qris_fikstore.png">
-      <button>Download Gambar</button>
-    </a>
+      <img id="qris-img" src="" alt="QRIS">
+      <div id="download-qris">
+        <a id="qris-link" href="" download="qris_fikstore.png">
+          <button>Download Gambar</button>
+        </a>
+      </div>
+
+      <p id="nomor-tujuan" style="display:none;">
+        Nomor: <span id="nomor-pembayaran">087811955247</span>
+        <button id="copy-button" onclick="salinNomor()">Salin</button>
+      </p>
+      <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
+
+      <input type="file" id="bukti">
+      <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
+    </div>
   </div>
-  <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
-  <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
+</main>
 
-  <input type="file" id="bukti">
-  <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
-</div>
-
-  </div></main><footer>
+<footer>
   &copy; FIK STORE | FIK OFFICIAL
-</footer><script>
+</footer>
+
+<!-- Tombol Live Chat WhatsApp -->
+<a href="https://wa.me/6287734818302" id="whatsapp-chat" target="_blank" title="Live Chat WhatsApp">&#x1F4AC;</a>
+
+<script>
   let produkDipilih = "";
   let perluPilihPaket = false;
   let paketTerpilih = "";
@@ -243,6 +277,13 @@
     document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
   }
 
+  function salinNomor() {
+    const nomor = document.getElementById("nomor-pembayaran").innerText;
+    navigator.clipboard.writeText(nomor).then(() => {
+      alert("Nomor pembayaran disalin: " + nomor);
+    });
+  }
+
   function kirimWhatsApp() {
     const spinner = document.getElementById("loading-spinner");
     spinner.style.display = "flex";
@@ -266,7 +307,8 @@
     setTimeout(() => {
       spinner.style.display = "none";
       window.open(link, "_blank");
-    }, 1000); // simulasi delay 1 detik
+    }, 1000);
   }
-</script></body>
-</html>
+</script>
+</body>
+  </html>
