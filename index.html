@@ -1,85 +1,91 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Admin - FIK STORE</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FIK STORE</title>
   <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f0f0f0;
-    }
-    .login-box {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-    .login-box h2 {
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-    input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 0.5rem;
-      background: #0b60b0;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    /* Tambahkan styling sesuai selera */
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Login Admin</h2>
-    <input type="email" id="email" placeholder="Email Admin">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="loginAdmin()">Login</button>
+  <h1>FIK STORE</h1>
+
+  <!-- Daftar Produk -->
+  <div id="produk-container">
+    <!-- Produk ditambahkan di sini -->
+  </div>
+
+  <!-- Modal Checkout -->
+  <div id="checkout-modal" style="display:none;">
+    <h2>Pilih Metode Pembayaran</h2>
+    <select id="metode-pembayaran" onchange="tampilkanMetode()">
+      <option value="">-- Pilih --</option>
+      <option value="qris">QRIS</option>
+      <option value="dana">Dana</option>
+      <option value="gopay">GoPay</option>
+    </select>
+    <div id="output-metode" style="margin-top: 1em;"></div>
+    
+    <h3>Upload Bukti Transfer:</h3>
+    <input type="file" id="bukti-input"/>
+    <button onclick="uploadBukti()">Upload & Kirim ke WhatsApp</button>
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
   <script>
     // Konfigurasi Firebase
     const firebaseConfig = {
-      apiKey: "ISI_API_KEY_MU",
-      authDomain: "ISI_AUTH_DOMAIN_MU",
-      projectId: "ISI_PROJECT_ID_MU",
-      storageBucket: "ISI_STORAGE_BUCKET_MU",
-      messagingSenderId: "ISI_SENDER_ID",
-      appId: "ISI_APP_ID"
+      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+      authDomain: "fikstore-id.firebaseapp.com",
+      projectId: "fikstore-id",
+      storageBucket: "fikstore-id.appspot.com",
+      messagingSenderId: "323293742570",
+      appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
     };
 
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+    const storage = firebase.storage();
 
-    function loginAdmin() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          alert("Login berhasil!");
-          window.location.href = "admin-dashboard.html"; // ganti ke halaman dashboard admin
-        })
-        .catch((error) => {
-          alert("Gagal login: " + error.message);
-        });
+    function tampilkanMetode() {
+      const metode = document.getElementById("metode-pembayaran").value;
+      const output = document.getElementById("output-metode");
+      if (metode === "qris") {
+        output.innerHTML = '<img src="qris.png" alt="QRIS" style="width:200px;">';
+      } else if (metode === "dana") {
+        output.innerHTML = 'Nomor Dana: 087811955247';
+      } else if (metode === "gopay") {
+        output.innerHTML = 'Nomor GoPay: 087811955247';
+      } else {
+        output.innerHTML = '';
+      }
     }
+
+    function uploadBukti() {
+      const fileInput = document.getElementById("bukti-input");
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Pilih file terlebih dahulu.");
+        return;
+      }
+
+      const storageRef = storage.ref("bukti/" + file.name);
+      storageRef.put(file).then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((url) => {
+          const waUrl = `https://wa.me/6287811955247?text=Halo%20Admin,%20ini%20bukti%20transfer%20saya:%20${encodeURIComponent(url)}`;
+          window.open(waUrl, "_blank");
+        });
+      }).catch((error) => {
+        alert("Gagal upload bukti: " + error.message);
+      });
+    }
+
+    // Tambahkan fitur rating, komentar, produk, dsb. di sini
   </script>
 </body>
 </html>
