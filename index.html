@@ -1,83 +1,272 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FIK STORE - Buyer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FIK STORE</title>
   <style>
-    body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
-    .produk { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .produk div { background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-    img { width: 100%; border-radius: 10px; }
-    textarea, input[type="text"] { width: 100%; margin-top: 10px; }
-    button { margin-top: 10px; }
-    #checkout-box { margin-top: 30px; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #0b60b0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    header .logo {
+      height: 100px;
+    }
+    header h1 {
+      margin: 0.5rem 0 0.2rem;
+    }
+    header a {
+      color: white;
+      text-decoration: underline;
+      display: inline-block;
+      margin-top: 0.3rem;
+    }
+    main {
+      padding: 1rem;
+    }
+    .produk {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .produk img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .produk h2 {
+      margin-top: 0;
+    }
+    button {
+      background: #0b60b0;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .checkout-box {
+      margin-top: 1rem;
+    }
+    select, input[type="file"], input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #qris-img {
+      width: 200px;
+      display: none;
+      margin: 1rem auto;
+    }
+    #download-qris {
+      display: none;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #eee;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #888;
+    }/* Spinner style */
+#loading-spinner {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #0b60b0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
   </style>
 </head>
-<body>
-
+<body><div id="loading-spinner">
+  <div class="spinner"></div>
+</div><header>
+  <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
   <h1>FIK STORE</h1>
-
-  <div class="produk">
-    <div>
-      <img src="produk1.png" alt="5GB" />
-      <p>5GB - Rp5.000</p>
-      <button onclick="checkout('5GB', 5000, 'qr1.png')">Checkout</button>
-    </div>
-    <div>
-      <img src="produk2.png" alt="6GB" />
-      <p>6GB - Rp6.000</p>
-      <button onclick="checkout('6GB', 6000, 'qr2.png')">Checkout</button>
-    </div>
-  </div>
-
-  <div id="checkout-box" style="display:none;">
+  <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
+</header><main>  <!-- Produk 1 -->  <section class="produk">
+    <h2>Pterodactyl Bot WhatsApp</h2>
+    <img src="produk1.png" alt="Bot WA">
+    <p>Panel pterodactyl untuk menjalankan bot whatsapp. Mendapatkan garansi 15 hari, server mokad langsung ganti, untuk run script bot whatsapp, panel private anti colong script, bot on 24 jam, anti delay, high quality</p>
+    <ul>
+    <button onclick="showCheckout('Bot WhatsApp', true)">Checkout</button>
+  </section>  <!-- Produk 2 -->  <section class="produk">
+    <h2>Admin Panel (ADP)</h2>
+    <img src="produk2.png" alt="Admin Panel">
+    <p>Dapat mengakses semua panel dalam server & fitur lainnya. Create panel sepuasnya, bisa open adp/reseler,server mokad langsung ganti, anti delay, high quality</p>
+    <p>Harga: Rp15.000 / bulan</p>
+    <button onclick="showCheckout('Admin Panel (ADP)', false)">Checkout</button>
+  </section>  <!-- Produk 3 -->  <section class="produk">
+    <h2>Reseller Panel</h2>
+    <img src="produk3.png" alt="Reseller Panel">
+    <p>Create panel menggunakan bot. Bebas create panel, server mokad langsung ganti, anti delay, high quality</p>
+    <p>Harga: Rp10.000 / bulan</p>
+    <button onclick="showCheckout('Reseller Panel', false)">Checkout</button>
+  </section>  <!-- Checkout Section -->  <div id="checkout" class="produk" style="display:none;">
     <h2>Checkout</h2>
-    <p id="checkout-info"></p>
-    <img id="qr-img" src="" alt="QRIS" style="max-width:200px;" />
-    <p>Upload bukti transfer:</p>
-    <input type="file" id="bukti" />
-    <button onclick="kirimWhatsApp()">Kirim ke WhatsApp</button>
+    <p id="produk-terpilih"></p>
+    <input type="text" id="nama" placeholder="Nama Anda">
+    <input type="tel" id="nomor" placeholder="Nomor WhatsApp"><select id="paket" style="display:none;" onchange="tampilPaket()">
+  <option value="">Pilih Paket</option>
+  <option value="5GB - Rp2.000">5GB</option>
+  <option value="6GB - Rp3.000">6GB</option>
+  <option value="7GB - Rp4.000">7GB</option>
+  <option value="8GB - Rp5.000">8GB</option>
+  <option value="9GB - Rp6.000">9GB</option>
+  <option value="10GB - Rp7.000">10GB</option>
+  <option value="Unlimited - Rp8.000">Unlimited</option>
+</select>
+
+<div id="metode-section" style="display:none;">
+  <select id="metode" onchange="tampilMetode()">
+    <option value="">Pilih Metode Pembayaran</option>
+    <option value="qris">QRIS</option>
+    <option value="dana">Dana</option>
+    <option value="gopay">GoPay</option>
+  </select>
+
+  <img id="qris-img" src="" alt="QRIS">
+  <div id="download-qris">
+    <a id="qris-link" href="" download="qris_fikstore.png">
+      <button>Download Gambar</button>
+    </a>
   </div>
+  <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
+  <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
 
-  <div class="rating">
-    <h2>Rating & Komentar</h2>
-    <input type="text" id="nama" placeholder="Nama" />
-    <textarea id="komentar" placeholder="Komentar..."></textarea>
-    <button onclick="submitKomentar()">Kirim</button>
-    <div id="list-komentar"></div>
-  </div>
+  <input type="file" id="bukti">
+  <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
+</div>
 
-  <script>
-    let produkDipilih = "";
-    let harga = 0;
-    let qrPath = "";
+  </div></main><footer>
+  &copy; FIK STORE | FIK OFFICIAL
+</footer><script>
+  let produkDipilih = "";
+  let perluPilihPaket = false;
+  let paketTerpilih = "";
 
-    function checkout(nama, hrg, qr) {
-      produkDipilih = nama;
-      harga = hrg;
-      qrPath = qr;
-      document.getElementById("checkout-box").style.display = "block";
-      document.getElementById("checkout-info").innerText = `${produkDipilih} - Rp${harga}`;
-      document.getElementById("qr-img").src = qrPath;
+  window.addEventListener("load", function () {
+    document.getElementById("loading-spinner").style.display = "none";
+  });
+
+  function showCheckout(namaProduk, butuhPaket) {
+    document.getElementById("checkout").style.display = "block";
+    document.getElementById("produk-terpilih").innerText = "Produk: " + namaProduk;
+    produkDipilih = namaProduk;
+    perluPilihPaket = butuhPaket;
+
+    document.getElementById("paket").style.display = butuhPaket ? "block" : "none";
+    document.getElementById("paket").value = "";
+    document.getElementById("metode-section").style.display = butuhPaket ? "none" : "block";
+    document.getElementById("qris-img").style.display = "none";
+    document.getElementById("download-qris").style.display = "none";
+    document.getElementById("nomor-tujuan").style.display = "none";
+    document.getElementById("total-pembayaran").innerText = !butuhPaket && namaProduk.includes("Admin Panel") ? "Total Pembayaran: Rp15.000"
+      : !butuhPaket && namaProduk.includes("Reseller") ? "Total Pembayaran: Rp10.000"
+      : "";
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  function tampilPaket() {
+    const paket = document.getElementById("paket").value;
+    paketTerpilih = paket;
+    const total = document.getElementById("total-pembayaran");
+
+    if (paket !== "") {
+      produkDipilih = "Bot WhatsApp - " + paket;
+      document.getElementById("metode-section").style.display = "block";
+      total.innerText = "Total Pembayaran: " + paket.split(" - ")[1];
+    } else {
+      document.getElementById("metode-section").style.display = "none";
+      total.innerText = "";
+    }
+  }
+
+  function tampilMetode() {
+    const metode = document.getElementById("metode").value;
+    const qrisImg = document.getElementById("qris-img");
+    const qrisLink = document.getElementById("qris-link");
+
+    let qrFile = "";
+
+    if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
+    else if (produkDipilih.includes("6GB")) qrFile = "qr2.png";
+    else if (produkDipilih.includes("7GB")) qrFile = "qr3.png";
+    else if (produkDipilih.includes("8GB")) qrFile = "qr4.png";
+    else if (produkDipilih.includes("9GB")) qrFile = "qr5.png";
+    else if (produkDipilih.includes("10GB")) qrFile = "qr6.png";
+    else if (produkDipilih.includes("Unlimited")) qrFile = "qr7.png";
+    else if (produkDipilih.includes("Admin Panel")) qrFile = "qr_admin.png";
+    else if (produkDipilih.includes("Reseller")) qrFile = "qr_reseller.png";
+
+    if (metode === "qris") {
+      qrisImg.src = qrFile;
+      qrisImg.style.display = "block";
+      qrisLink.href = qrFile;
+      document.getElementById("download-qris").style.display = "block";
+    } else {
+      qrisImg.style.display = "none";
+      document.getElementById("download-qris").style.display = "none";
     }
 
-    function kirimWhatsApp() {
-      const file = document.getElementById("bukti").files[0];
-      if (!file) return alert("Upload bukti dulu!");
-      const nomor = "6287811955247";
-      const url = `https://wa.me/${nomor}?text=Saya sudah transfer untuk ${produkDipilih} - Rp${harga}`;
-      window.open(url, '_blank');
+    document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
+  }
+
+  function kirimWhatsApp() {
+    const spinner = document.getElementById("loading-spinner");
+    spinner.style.display = "flex";
+
+    const nama = document.getElementById("nama").value;
+    const nomor = document.getElementById("nomor").value;
+    const metode = document.getElementById("metode").value;
+    const bukti = document.getElementById("bukti").files[0];
+
+    if (!nama || !nomor || !metode || !bukti) {
+      spinner.style.display = "none";
+      alert("Dimohon untuk isi semua data dan unggah bukti transfer.");
+      return;
     }
 
-    function submitKomentar() {
-      const nama = document.getElementById("nama").value;
-      const komentar = document.getElementById("komentar").value;
-      const div = document.createElement("div");
-      div.innerHTML = `<strong>${nama}</strong>: ${komentar}`;
-      document.getElementById("list-komentar").appendChild(div);
-    }
-  </script>
+    const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
+    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bukti transfer saya.`;
 
-</body>
+    const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
+    
+    setTimeout(() => {
+      spinner.style.display = "none";
+      window.open(link, "_blank");
+    }, 1000); // simulasi delay 1 detik
+  }
+</script></body>
 </html>
