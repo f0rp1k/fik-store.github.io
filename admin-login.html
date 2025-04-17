@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Admin - FIK STORE</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    .login-box h2 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      background: #0b60b0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Login Admin</h2>
+    <input type="email" id="email" placeholder="Email Admin">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="loginAdmin()">Login</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script>
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+      authDomain: "fikstore-id.firebaseapp.com",
+      projectId: "fikstore-id",
+      storageBucket: "fikstore-id.appspot.com",
+      messagingSenderId: "323293742570",
+      appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function loginAdmin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          alert("Login berhasil!");
+          window.location.href = "admin-dashboard.html";
+        })
+        .catch((error) => {
+          alert("Gagal login: " + error.message);
+        });
+    }
+  </script>
+</body>
+</html>
