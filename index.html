@@ -1,88 +1,209 @@
-<!DOCTYPE html><html lang="id">
-<head>
+<!DOCTYPE html><html lang="id"><head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FIK STORE</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
-    body { font-family: sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
-    header { background: #0b60b0; color: white; text-align: center; padding: 1rem; }
-    header img { height: 100px; }
-    main { padding: 1rem; }
-    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-    button { background: #0b60b0; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; margin-top: 0.5rem; }
-    input, select { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border-radius: 5px; border: 1px solid #ccc; }
-    #bukti-upload { margin: 1rem 0; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #0b60b0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    header .logo {
+      height: 100px;
+    }
+    header h1 {
+      margin: 0.5rem 0 0.2rem;
+    }
+    main {
+      padding: 1rem;
+    }
+    .produk {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    button {
+      background: #0b60b0;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    select, input[type="file"], input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #qris-img {
+      width: 200px;
+      display: none;
+      margin: 1rem auto;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #eee;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+    #loading-spinner {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #0b60b0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo-fikstore.png" alt="FIK STORE">
-    <h1>FIK STORE</h1>
-  </header>
-  <main>
-    <div class="produk">
-      <h2>Bot WhatsApp 5GB</h2>
-      <p>Harga: Rp2.000</p>
-      <button onclick="checkout('Bot WhatsApp 5GB', 'Rp2.000')">Checkout</button>
-    </div>
-    <div id="checkoutForm" class="produk" style="display:none">
-      <h2>Checkout</h2>
-      <p id="produkNama"></p>
-      <input type="text" id="nama" placeholder="Nama Anda">
-      <input type="tel" id="wa" placeholder="Nomor WhatsApp">
-      <select id="metode">
-        <option value="">Pilih Metode</option>
-        <option value="qris">QRIS</option>
-        <option value="dana">Dana</option>
-        <option value="gopay">GoPay</option>
-      </select>
-      <input type="file" id="bukti-upload" accept="image/*">
-      <button onclick="kirimCheckout()">Kirim Bukti & Checkout</button>
-    </div>
-  </main>
-  <script>
-    const firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      databaseURL: "https://fikstore-id-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "fikstore-id",
-      storageBucket: "fikstore-id.appspot.com",
-      messagingSenderId: "",
-      appId: ""
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const storage = firebase.storage();let produkDipilih = "";
-let hargaDipilih = "";
+<div id="loading-spinner" style="display: none;">
+  <div class="spinner"></div>
+</div>
+<header>
+  <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
+  <h1>FIK STORE</h1>
+</header>
+<main>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 5GB</h2>
+    <p>Harga: Rp2.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 5GB', 2000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 6GB</h2>
+    <p>Harga: Rp3.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 6GB', 3000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 7GB</h2>
+    <p>Harga: Rp4.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 7GB', 4000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 8GB</h2>
+    <p>Harga: Rp5.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 8GB', 5000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 9GB</h2>
+    <p>Harga: Rp6.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 9GB', 6000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - 10GB</h2>
+    <p>Harga: Rp7.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - 10GB', 7000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Paket Bot WhatsApp - Unlimited</h2>
+    <p>Harga: Rp8.000</p>
+    <button onclick="checkoutProduk('Bot WhatsApp - Unlimited', 8000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Reseller Panel</h2>
+    <p>Harga: Rp10.000 / bulan</p>
+    <button onclick="checkoutProduk('Reseller Panel', 10000)">Checkout</button>
+  </section>
+  <section class="produk">
+    <h2>Admin Panel (ADP)</h2>
+    <p>Harga: Rp15.000 / bulan</p>
+    <button onclick="checkoutProduk('Admin Panel (ADP)', 15000)">Checkout</button>
+  </section>  <div id="checkout" class="produk" style="display:none;">
+    <h2>Checkout</h2>
+    <p id="produk-terpilih"></p>
+    <input type="text" id="nama" placeholder="Nama Anda">
+    <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
+    <input type="file" id="bukti">
+    <p id="total-pembayaran" style="font-weight: bold;"></p>
+    <button onclick="submitPembayaran()">Kirim Bukti Pembayaran</button>
+  </div>
+</main>
+<footer>
+  &copy; FIK STORE | FIK OFFICIAL
+</footer>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBHwZl-XD2MujrHlcXnU06AC1qv1YvU1iE",
+    authDomain: "fikstore-id.firebaseapp.com",
+    projectId: "fikstore-id",
+    storageBucket: "fikstore-id.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef",
+    databaseURL: "https://fikstore-id-default-rtdb.firebaseio.com"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const storage = firebase.storage();
+  const database = firebase.database();let produkDipilih = ""; let hargaDipilih = 0;
 
-function checkout(nama, harga) {
-  produkDipilih = nama;
-  hargaDipilih = harga;
-  document.getElementById("produkNama").innerText = `${nama} - ${harga}`;
-  document.getElementById("checkoutForm").style.display = "block";
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+function checkoutProduk(nama, harga) { produkDipilih = nama; hargaDipilih = harga; document.getElementById("produk-terpilih").innerText = "Produk: " + nama; document.getElementById("total-pembayaran").innerText = "Total Pembayaran: Rp" + harga.toLocaleString(); document.getElementById("checkout").style.display = "block"; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }
+
+function submitPembayaran() { const spinner = document.getElementById("loading-spinner"); spinner.style.display = "flex";
+
+const nama = document.getElementById("nama").value;
+const nomor = document.getElementById("nomor").value;
+const bukti = document.getElementById("bukti").files[0];
+
+if (!nama || !nomor || !bukti) {
+  spinner.style.display = "none";
+  alert("Harap isi semua data dan unggah bukti transfer.");
+  return;
 }
 
-async function kirimCheckout() {
-  const nama = document.getElementById("nama").value.trim();
-  const wa = document.getElementById("wa").value.trim();
-  const metode = document.getElementById("metode").value;
-  const file = document.getElementById("bukti-upload").files[0];
-  if (!nama || !wa || !metode || !file) return alert("Harap lengkapi semua data dan upload bukti.");
+const waktu = new Date().toISOString();
+const storageRef = storage.ref('bukti/' + waktu + '_' + bukti.name);
+storageRef.put(bukti).then(snapshot => snapshot.ref.getDownloadURL()).then(url => {
+  const transaksiRef = database.ref('transaksi').push();
+  transaksiRef.set({
+    produk: produkDipilih,
+    harga: hargaDipilih,
+    nama: nama,
+    nomor: nomor,
+    bukti: url,
+    status: "Menunggu Konfirmasi",
+    waktu: waktu
+  }).then(() => {
+    spinner.style.display = "none";
+    alert("Pembayaran berhasil dikirim! Silakan tunggu konfirmasi admin.");
+    document.getElementById("checkout").style.display = "none";
+  });
+}).catch(error => {
+  spinner.style.display = "none";
+  alert("Terjadi kesalahan: " + error.message);
+});
 
-  const fileRef = storage.ref(`bukti/${Date.now()}_${file.name}`);
-  await fileRef.put(file);
-  const fileUrl = await fileRef.getDownloadURL();
-
-  const data = { nama, wa, produk: produkDipilih, harga: hargaDipilih, metode, bukti: fileUrl, timestamp: Date.now() };
-  await db.ref("transaksi").push(data);
-
-  const pesan = `Halo Admin, saya sudah bayar.
-
-Nama: ${nama} Nomor: ${wa} Produk: ${produkDipilih} Harga: ${hargaDipilih} Metode: ${metode} Bukti: ${fileUrl}; window.open(https://wa.me/6287734818302?text=${encodeURIComponent(pesan)}`, '_blank'); alert("Checkout berhasil, silakan tunggu konfirmasi."); document.getElementById("checkoutForm").reset(); } </script>
+} </script>
 
 </body>
 </html>
