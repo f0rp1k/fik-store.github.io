@@ -1,115 +1,47 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FIK STORE</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
-    }
-    header {
-      background: #0b60b0;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    header .logo {
-      height: 100px;
-    }
-    header h1 {
-      margin: 0.5rem 0 0.2rem;
-    }
-    header a {
-      color: white;
-      text-decoration: underline;
-      display: inline-block;
-      margin-top: 0.3rem;
-    }
-    main {
-      padding: 1rem;
-    }
-    .produk {
-      background: white;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    .produk img {
-      max-width: 100%;
-      border-radius: 10px;
-    }
-    .produk h2 {
-      margin-top: 0;
-    }
-    button {
-      background: #0b60b0;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    input[type="text"], input[type="tel"], input[type="file"] {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    #upload-status {
-      margin-top: 0.5rem;
-      font-weight: bold;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #eee;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #888;
-    }
-    #produk-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
+    body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    header { background: #0b60b0; color: white; padding: 1rem; text-align: center; }
+    main { padding: 1rem; }
+    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    .produk img { width: 100%; max-width: 200px; border-radius: 8px; }
+    button { background: #0b60b0; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
+    #checkout-form { display: none; background: white; padding: 1rem; border-radius: 10px; margin-top: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, select { width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
+    footer { text-align: center; padding: 1rem; font-size: 0.9rem; color: #555; }
   </style>
 </head>
 <body>
   <header>
-    <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
     <h1>FIK STORE</h1>
-    <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
   </header>
   <main>
-    <section class="produk">
-      <h2>Form Bukti Transfer</h2>
-      <input type="text" id="nama" placeholder="Nama Anda">
-      <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
-      <input type="file" id="bukti">
-      <button onclick="uploadBukti()">Upload Bukti</button>
-      <p id="upload-status"></p>
-    </section>
+    <div id="produk-container"></div><div id="checkout-form">
+  <h2>Checkout</h2>
+  <p id="selected-product"></p>
+  <input type="text" id="nama" placeholder="Nama Anda" required>
+  <input type="tel" id="nomor" placeholder="Nomor WhatsApp" required>
+  <select id="metode">
+    <option value="QRIS">QRIS</option>
+    <option value="DANA">DANA</option>
+    <option value="GOPAY">GOPAY</option>
+  </select>
+  <input type="text" id="linkBukti" placeholder="Link Gambar Bukti Transfer (contoh dari Imgur)" required>
+  <button onclick="kirimTransaksi()">Kirim Bukti</button>
+  <p id="status-upload"></p>
+</div>
 
-    <section id="produk-list"></section>
   </main>
-
   <footer>
-    &copy; FIK STORE | FIK OFFICIAL
-  </footer>
-
-  <script type="module">
+    &copy; 2025 FIK STORE
+  </footer>  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-    import { getDatabase, ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
@@ -122,66 +54,66 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-    const database = getDatabase(app);
-    const firestore = getFirestore(app);
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app);
 
-    window.uploadBukti = async function () {
+    const produkContainer = document.getElementById("produk-container");
+    const selectedProductEl = document.getElementById("selected-product");
+    let selectedProduct = null;
+
+    async function loadProduk() {
+      const snapshot = await getDocs(collection(db, "products"));
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "produk";
+        div.innerHTML = `
+          <h3>${data.name}</h3>
+          <p>${data.description}</p>
+          <p>Harga: Rp${data.discount ?? data.price}</p>
+          <img src="${data.imageUrl}" alt="${data.name}" />
+          <br><br>
+          <button onclick="checkout('${doc.id}', '${data.name}', ${data.discount ?? data.price})">Checkout</button>
+        `;
+        produkContainer.appendChild(div);
+      });
+    }
+
+    window.checkout = function(id, name, harga) {
+      selectedProduct = { id, name, harga };
+      document.getElementById("checkout-form").style.display = "block";
+      selectedProductEl.innerText = `Produk: ${name} - Rp${harga}`;
+    }
+
+    window.kirimTransaksi = async function () {
       const nama = document.getElementById("nama").value;
       const nomor = document.getElementById("nomor").value;
-      const file = document.getElementById("bukti").files[0];
-      const status = document.getElementById("upload-status");
+      const metode = document.getElementById("metode").value;
+      const linkBukti = document.getElementById("linkBukti").value;
+      const status = document.getElementById("status-upload");
 
-      if (!nama || !nomor || !file) {
+      if (!nama || !nomor || !linkBukti || !selectedProduct) {
         status.innerText = "Harap lengkapi semua data.";
         return;
       }
 
-      const buktiRef = ref(storage, `bukti/${Date.now()}_${file.name}`);
-      try {
-        await uploadBytes(buktiRef, file);
-        const downloadURL = await getDownloadURL(buktiRef);
-
-        const transaksiRef = push(dbRef(database, 'transaksi'));
-        await set(transaksiRef, {
-          nama: nama,
-          nomor: nomor,
-          bukti: downloadURL,
-          waktu: new Date().toISOString()
-        });
-
-        status.innerText = "Bukti berhasil diupload dan dikirim.";
-        document.getElementById("nama").value = "";
-        document.getElementById("nomor").value = "";
-        document.getElementById("bukti").value = "";
-      } catch (error) {
-        console.error(error);
-        status.innerText = "Terjadi kesalahan saat upload.";
-      }
-    }
-
-    async function tampilkanProduk() {
-      const produkList = document.getElementById("produk-list");
-      const querySnapshot = await getDocs(collection(firestore, "products"));
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const image = data.image || "https://via.placeholder.com/300x200?text=No+Image";
-        const harga = data.discountPrice || data.price;
-
-        const html = `
-          <div class="produk">
-            <img src="${image}" alt="${data.name}">
-            <h2>${data.name}</h2>
-            <p>${data.description || ""}</p>
-            <p><strong>Harga: Rp${harga}</strong></p>
-          </div>
-        `;
-        produkList.innerHTML += html;
+      const transaksiRef = push(ref(rtdb, 'transaksi'));
+      await set(transaksiRef, {
+        nama,
+        nomor,
+        metode,
+        produk: selectedProduct.name,
+        harga: selectedProduct.harga,
+        bukti: linkBukti,
+        waktu: new Date().toISOString(),
+        status: "Menunggu"
       });
+
+      status.innerText = "Bukti berhasil dikirim.";
+      document.getElementById("checkout-form").reset();
+      document.getElementById("checkout-form").style.display = "none";
     }
 
-    tampilkanProduk();
-  </script>
-</body>
+    loadProduk();
+  </script></body>
 </html>
