@@ -1,125 +1,98 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <title>Admin Dashboard - FIK STORE</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - FIK STORE</title>
   <script type="module">
-    // Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-    import {
-      getStorage, ref, uploadBytes, getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";const firebaseConfig = {
+  apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+  authDomain: "fikstore-id.firebaseapp.com",
+  projectId: "fikstore-id",
+  storageBucket: "fikstore-id.appspot.com",
+  messagingSenderId: "323293742570",
+  appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
+};
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
-      authDomain: "fikstore-id.firebaseapp.com",
-      projectId: "fikstore-id",
-      storageBucket: "fikstore-id.appspot.com",
-      messagingSenderId: "323293742570",
-      appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const productsCol = collection(db, "products");
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+const productList = document.getElementById("product-list");
+const form = document.getElementById("add-product-form");
 
-    const productForm = document.getElementById("productForm");
-    const productList = document.getElementById("productList");
-    const transactionList = document.getElementById("transactionList");
+async function loadProducts() {
+  productList.innerHTML = "";
+  const snapshot = await getDocs(productsCol);
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <strong>${data.name}</strong><br>
+      ${data.description}<br>
+      Harga: Rp${data.price} ${data.discount ? `(Diskon: Rp${data.discount})` : ""}<br>
+      <img src="${data.imageUrl}" width="100"><br>
+      <button onclick="editProduct('${docSnap.id}', '${data.name}', '${data.description}', ${data.price}, ${data.discount ?? 0}, '${data.imageUrl}')">Edit</button>
+      <button onclick="deleteProduct('${docSnap.id}')">Hapus</button>
+      <hr>
+    `;
+    productList.appendChild(div);
+  });
+}
 
-    async function loadProducts() {
-      productList.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "products"));
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <img src="${data.image}" width="100"><br>
-          <strong>${data.name}</strong><br>
-          Deskripsi: ${data.description}<br>
-          Harga: Rp${data.price}<br>
-          ${data.discount ? `Diskon: Rp${data.discount}<br>` : ""}
-          <button onclick="deleteProduct('${docSnap.id}')">Hapus</button>
-          <hr>
-        `;
-        productList.appendChild(div);
-      });
-    }
+window.editProduct = function(id, name, description, price, discount, imageUrl) {
+  document.getElementById("product-id").value = id;
+  form.name.value = name;
+  form.description.value = description;
+  form.price.value = price;
+  form.discount.value = discount || "";
+  form.imageUrl.value = imageUrl;
+  document.getElementById("submit-btn").innerText = "Update Produk";
+}
 
-    window.deleteProduct = async function(id) {
-      await deleteDoc(doc(db, "products", id));
-      loadProducts();
-    }
-
-    productForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const name = productForm.name.value;
-      const description = productForm.description.value;
-      const price = parseInt(productForm.price.value);
-      const discount = productForm.discount.value ? parseInt(productForm.discount.value) : null;
-      const imageFile = productForm.image.files[0];
-
-      const imageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-      await uploadBytes(imageRef, imageFile);
-      const imageUrl = await getDownloadURL(imageRef);
-
-      await addDoc(collection(db, "products"), {
-        name, description, price, discount, image: imageUrl
-      });
-
-      productForm.reset();
-      loadProducts();
-    };
-
-    async function loadTransactions() {
-      transactionList.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "transactions"));
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <strong>${data.name}</strong> (${data.whatsapp})<br>
-          Produk: ${data.product}<br>
-          Status:
-          <select onchange="updateStatus('${docSnap.id}', this.value)">
-            <option value="menunggu" ${data.status === "menunggu" ? "selected" : ""}>Menunggu</option>
-            <option value="proses" ${data.status === "proses" ? "selected" : ""}>Proses</option>
-            <option value="done" ${data.status === "done" ? "selected" : ""}>Done</option>
-          </select>
-          <br><a href="${data.proof}" target="_blank">Lihat Bukti Transfer</a>
-          <hr>
-        `;
-        transactionList.appendChild(div);
-      });
-    }
-
-    window.updateStatus = async function(id, status) {
-      await updateDoc(doc(db, "transactions", id), { status });
-      loadTransactions();
-    }
-
+window.deleteProduct = async function(id) {
+  if (confirm("Yakin ingin menghapus produk?")) {
+    await deleteDoc(doc(productsCol, id));
     loadProducts();
-    loadTransactions();
+  }
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("product-id").value;
+  const data = {
+    name: form.name.value,
+    description: form.description.value,
+    price: Number(form.price.value),
+    discount: form.discount.value ? Number(form.discount.value) : null,
+    imageUrl: form.imageUrl.value,
+  };
+  if (id) {
+    await updateDoc(doc(productsCol, id), data);
+  } else {
+    await addDoc(productsCol, data);
+  }
+  form.reset();
+  document.getElementById("submit-btn").innerText = "Tambah Produk";
+  loadProducts();
+});
+
+loadProducts();
+
   </script>
 </head>
 <body>
-  <h2>Tambah Produk</h2>
-  <form id="productForm">
-    <input name="name" placeholder="Nama Produk" required><br>
+  <h1>Dashboard Admin - FIK STORE</h1>
+  <form id="add-product-form">
+    <input type="hidden" id="product-id">
+    <input type="text" name="name" placeholder="Nama Produk" required><br>
     <textarea name="description" placeholder="Deskripsi" required></textarea><br>
-    <input name="price" type="number" placeholder="Harga" required><br>
-    <input name="discount" type="number" placeholder="Harga Diskon (opsional)"><br>
-    <input name="image" type="file" accept="image/*" required><br>
-    <button type="submit">Tambah</button>
+    <input type="number" name="price" placeholder="Harga" required><br>
+    <input type="number" name="discount" placeholder="Harga Diskon (Opsional)"><br>
+    <input type="text" name="imageUrl" placeholder="Link Gambar (URL)" required><br>
+    <button id="submit-btn" type="submit">Tambah Produk</button>
   </form>
-
-  <h2>Daftar Produk</h2>
-  <div id="productList">Memuat...</div>
-
-  <h2>Daftar Transaksi</h2>
-  <div id="transactionList">Memuat...</div>
+  <hr>
+  <div id="product-list"></div>
 </body>
 </html>
