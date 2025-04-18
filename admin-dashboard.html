@@ -32,4 +32,94 @@
 
     async function loadProducts() {
       productList.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "
+      const querySnapshot = await getDocs(collection(db, "products"));
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <img src="${data.image}" width="100"><br>
+          <strong>${data.name}</strong><br>
+          Deskripsi: ${data.description}<br>
+          Harga: Rp${data.price}<br>
+          ${data.discount ? `Diskon: Rp${data.discount}<br>` : ""}
+          <button onclick="deleteProduct('${docSnap.id}')">Hapus</button>
+          <hr>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    window.deleteProduct = async function(id) {
+      await deleteDoc(doc(db, "products", id));
+      loadProducts();
+    }
+
+    productForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const name = productForm.name.value;
+      const description = productForm.description.value;
+      const price = parseInt(productForm.price.value);
+      const discount = productForm.discount.value ? parseInt(productForm.discount.value) : null;
+      const imageFile = productForm.image.files[0];
+
+      const imageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+      await uploadBytes(imageRef, imageFile);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      await addDoc(collection(db, "products"), {
+        name, description, price, discount, image: imageUrl
+      });
+
+      productForm.reset();
+      loadProducts();
+    };
+
+    async function loadTransactions() {
+      transactionList.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "transactions"));
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <strong>${data.name}</strong> (${data.whatsapp})<br>
+          Produk: ${data.product}<br>
+          Status:
+          <select onchange="updateStatus('${docSnap.id}', this.value)">
+            <option value="menunggu" ${data.status === "menunggu" ? "selected" : ""}>Menunggu</option>
+            <option value="proses" ${data.status === "proses" ? "selected" : ""}>Proses</option>
+            <option value="done" ${data.status === "done" ? "selected" : ""}>Done</option>
+          </select>
+          <br><a href="${data.proof}" target="_blank">Lihat Bukti Transfer</a>
+          <hr>
+        `;
+        transactionList.appendChild(div);
+      });
+    }
+
+    window.updateStatus = async function(id, status) {
+      await updateDoc(doc(db, "transactions", id), { status });
+      loadTransactions();
+    }
+
+    loadProducts();
+    loadTransactions();
+  </script>
+</head>
+<body>
+  <h2>Tambah Produk</h2>
+  <form id="productForm">
+    <input name="name" placeholder="Nama Produk" required><br>
+    <textarea name="description" placeholder="Deskripsi" required></textarea><br>
+    <input name="price" type="number" placeholder="Harga" required><br>
+    <input name="discount" type="number" placeholder="Harga Diskon (opsional)"><br>
+    <input name="image" type="file" accept="image/*" required><br>
+    <button type="submit">Tambah</button>
+  </form>
+
+  <h2>Daftar Produk</h2>
+  <div id="productList">Memuat...</div>
+
+  <h2>Daftar Transaksi</h2>
+  <div id="transactionList">Memuat...</div>
+</body>
+</html>
