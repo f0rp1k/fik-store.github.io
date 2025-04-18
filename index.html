@@ -55,24 +55,16 @@
       cursor: pointer;
       margin-top: 0.5rem;
     }
-    .checkout-box {
-      margin-top: 1rem;
-    }
-    select, input[type="file"], input[type="text"], input[type="tel"] {
+    input[type="text"], input[type="tel"], input[type="file"] {
       width: 100%;
       padding: 0.5rem;
-      margin: 0.5rem 0;
+      margin-top: 0.5rem;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
-    #qris-img {
-      width: 200px;
-      display: none;
-      margin: 1rem auto;
-    }
-    #download-qris {
-      display: none;
-      text-align: center;
+    #upload-status {
+      margin-top: 0.5rem;
+      font-weight: bold;
     }
     footer {
       text-align: center;
@@ -81,192 +73,78 @@
       margin-top: 2rem;
       font-size: 0.9rem;
       color: #888;
-    }/* Spinner style */
-#loading-spinner {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #0b60b0;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
+    }
   </style>
 </head>
-<body><div id="loading-spinner">
-  <div class="spinner"></div>
-</div><header>
-  <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
-  <h1>FIK STORE</h1>
-  <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
-</header><main>  <!-- Produk 1 -->  <section class="produk">
-    <h2>Pterodactyl Bot WhatsApp</h2>
-    <img src="produk1.png" alt="Bot WA">
-    <p>Panel pterodactyl untuk menjalankan bot whatsapp. Mendapatkan garansi 15 hari, server mokad langsung ganti, untuk run script bot whatsapp, panel private anti colong script, bot on 24 jam, anti delay, high quality</p>
-    <ul>
-    <button onclick="showCheckout('Bot WhatsApp', true)">Checkout</button>
-  </section>  <!-- Produk 2 -->  <section class="produk">
-    <h2>Admin Panel (ADP)</h2>
-    <img src="produk2.png" alt="Admin Panel">
-    <p>Dapat mengakses semua panel dalam server & fitur lainnya. Create panel sepuasnya, bisa open adp/reseler,server mokad langsung ganti, anti delay, high quality</p>
-    <p>Harga: Rp15.000 / bulan</p>
-    <button onclick="showCheckout('Admin Panel (ADP)', false)">Checkout</button>
-  </section>  <!-- Produk 3 -->  <section class="produk">
-    <h2>Reseller Panel</h2>
-    <img src="produk3.png" alt="Reseller Panel">
-    <p>Create panel menggunakan bot. Bebas create panel, server mokad langsung ganti, anti delay, high quality</p>
-    <p>Harga: Rp10.000 / bulan</p>
-    <button onclick="showCheckout('Reseller Panel', false)">Checkout</button>
-  </section>  <!-- Checkout Section -->  <div id="checkout" class="produk" style="display:none;">
-    <h2>Checkout</h2>
-    <p id="produk-terpilih"></p>
-    <input type="text" id="nama" placeholder="Nama Anda">
-    <input type="tel" id="nomor" placeholder="Nomor WhatsApp"><select id="paket" style="display:none;" onchange="tampilPaket()">
-  <option value="">Pilih Paket</option>
-  <option value="5GB - Rp2.000">5GB</option>
-  <option value="6GB - Rp3.000">6GB</option>
-  <option value="7GB - Rp4.000">7GB</option>
-  <option value="8GB - Rp5.000">8GB</option>
-  <option value="9GB - Rp6.000">9GB</option>
-  <option value="10GB - Rp7.000">10GB</option>
-  <option value="Unlimited - Rp8.000">Unlimited</option>
-</select>
+<body>
+  <header>
+    <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
+    <h1>FIK STORE</h1>
+    <a href="https://wa.me/6287734818302" target="_blank">Customer Service</a>
+  </header>
+  <main>
+    <section class="produk">
+      <h2>Form Bukti Transfer</h2>
+      <input type="text" id="nama" placeholder="Nama Anda">
+      <input type="tel" id="nomor" placeholder="Nomor WhatsApp">
+      <input type="file" id="bukti">
+      <button onclick="uploadBukti()">Upload Bukti</button>
+      <p id="upload-status"></p>
+    </section>
+  </main>
+  <footer>
+    &copy; FIK STORE | FIK OFFICIAL
+  </footer>  <!-- Firebase SDK -->  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+    import { getDatabase, ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-<div id="metode-section" style="display:none;">
-  <select id="metode" onchange="tampilMetode()">
-    <option value="">Pilih Metode Pembayaran</option>
-    <option value="qris">QRIS</option>
-    <option value="dana">Dana</option>
-    <option value="gopay">GoPay</option>
-  </select>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+      authDomain: "fikstore-id.firebaseapp.com",
+      projectId: "fikstore-id",
+      storageBucket: "fikstore-id.appspot.com",
+      messagingSenderId: "323293742570",
+      appId: "1:323293742570:web:5de4906939fd19d6ec9e93",
+      databaseURL: "https://fikstore-id-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
 
-  <img id="qris-img" src="" alt="QRIS">
-  <div id="download-qris">
-    <a id="qris-link" href="" download="qris_fikstore.png">
-      <button>Download Gambar</button>
-    </a>
-  </div>
-  <p id="nomor-tujuan" style="display:none;">Nomor: 087811955247</p>
-  <p id="total-pembayaran" style="font-weight: bold; margin-top: 1rem;"></p>
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const database = getDatabase(app);
 
-  <input type="file" id="bukti">
-  <button onclick="kirimWhatsApp()">Kirim Bukti Transfer</button>
-</div>
+    window.uploadBukti = async function () {
+      const nama = document.getElementById("nama").value;
+      const nomor = document.getElementById("nomor").value;
+      const file = document.getElementById("bukti").files[0];
+      const status = document.getElementById("upload-status");
 
-  </div></main><footer>
-  &copy; FIK STORE | FIK OFFICIAL
-</footer><script>
-  let produkDipilih = "";
-  let perluPilihPaket = false;
-  let paketTerpilih = "";
+      if (!nama || !nomor || !file) {
+        status.innerText = "Harap lengkapi semua data.";
+        return;
+      }
 
-  window.addEventListener("load", function () {
-    document.getElementById("loading-spinner").style.display = "none";
-  });
+      const buktiRef = ref(storage, `bukti/${Date.now()}_${file.name}`);
+      try {
+        await uploadBytes(buktiRef, file);
+        const downloadURL = await getDownloadURL(buktiRef);
 
-  function showCheckout(namaProduk, butuhPaket) {
-    document.getElementById("checkout").style.display = "block";
-    document.getElementById("produk-terpilih").innerText = "Produk: " + namaProduk;
-    produkDipilih = namaProduk;
-    perluPilihPaket = butuhPaket;
+        const transaksiRef = push(dbRef(database, 'transaksi'));
+        await set(transaksiRef, {
+          nama: nama,
+          nomor: nomor,
+          bukti: downloadURL,
+          waktu: new Date().toISOString()
+        });
 
-    document.getElementById("paket").style.display = butuhPaket ? "block" : "none";
-    document.getElementById("paket").value = "";
-    document.getElementById("metode-section").style.display = butuhPaket ? "none" : "block";
-    document.getElementById("qris-img").style.display = "none";
-    document.getElementById("download-qris").style.display = "none";
-    document.getElementById("nomor-tujuan").style.display = "none";
-    document.getElementById("total-pembayaran").innerText = !butuhPaket && namaProduk.includes("Admin Panel") ? "Total Pembayaran: Rp15.000"
-      : !butuhPaket && namaProduk.includes("Reseller") ? "Total Pembayaran: Rp10.000"
-      : "";
-
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  }
-
-  function tampilPaket() {
-    const paket = document.getElementById("paket").value;
-    paketTerpilih = paket;
-    const total = document.getElementById("total-pembayaran");
-
-    if (paket !== "") {
-      produkDipilih = "Bot WhatsApp - " + paket;
-      document.getElementById("metode-section").style.display = "block";
-      total.innerText = "Total Pembayaran: " + paket.split(" - ")[1];
-    } else {
-      document.getElementById("metode-section").style.display = "none";
-      total.innerText = "";
+        status.innerText = "Bukti berhasil diupload dan dikirim.";
+        document.getElementById("nama").value = "";
+        document.getElementById("nomor").value = "";
+        document.getElementById("bukti").value = "";
+      } catch (error) {
+        console.error(error);
+        status.innerText = "Terjadi kesalahan saat upload.";
+      }
     }
-  }
-
-  function tampilMetode() {
-    const metode = document.getElementById("metode").value;
-    const qrisImg = document.getElementById("qris-img");
-    const qrisLink = document.getElementById("qris-link");
-
-    let qrFile = "";
-
-    if (produkDipilih.includes("5GB")) qrFile = "qr1.png";
-    else if (produkDipilih.includes("6GB")) qrFile = "qr2.png";
-    else if (produkDipilih.includes("7GB")) qrFile = "qr3.png";
-    else if (produkDipilih.includes("8GB")) qrFile = "qr4.png";
-    else if (produkDipilih.includes("9GB")) qrFile = "qr5.png";
-    else if (produkDipilih.includes("10GB")) qrFile = "qr6.png";
-    else if (produkDipilih.includes("Unlimited")) qrFile = "qr7.png";
-    else if (produkDipilih.includes("Admin Panel")) qrFile = "qr_admin.png";
-    else if (produkDipilih.includes("Reseller")) qrFile = "qr_reseller.png";
-
-    if (metode === "qris") {
-      qrisImg.src = qrFile;
-      qrisImg.style.display = "block";
-      qrisLink.href = qrFile;
-      document.getElementById("download-qris").style.display = "block";
-    } else {
-      qrisImg.style.display = "none";
-      document.getElementById("download-qris").style.display = "none";
-    }
-
-    document.getElementById("nomor-tujuan").style.display = (metode === "dana" || metode === "gopay") ? "block" : "none";
-  }
-
-  function kirimWhatsApp() {
-    const spinner = document.getElementById("loading-spinner");
-    spinner.style.display = "flex";
-
-    const nama = document.getElementById("nama").value;
-    const nomor = document.getElementById("nomor").value;
-    const metode = document.getElementById("metode").value;
-    const bukti = document.getElementById("bukti").files[0];
-
-    if (!nama || !nomor || !metode || !bukti) {
-      spinner.style.display = "none";
-      alert("Dimohon untuk isi semua data dan unggah bukti transfer.");
-      return;
-    }
-
-    const metodeText = metode === "qris" ? "QRIS" : metode === "dana" ? "Dana (087811955247)" : "GoPay (087811955247)";
-    const pesan = `Halo Admin, saya telah melakukan pembayaran.\n\nProduk: ${produkDipilih}\nNama: ${nama}\nNomor: ${nomor}\nPayment: ${metodeText}\n\nBerikut bukti transfer saya.`;
-
-    const link = "https://wa.me/6287734818302?text=" + encodeURIComponent(pesan);
-    
-    setTimeout(() => {
-      spinner.style.display = "none";
-      window.open(link, "_blank");
-    }, 1000); // simulasi delay 1 detik
-  }
-</script></body>
+  </script></body>
 </html>
