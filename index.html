@@ -1,119 +1,92 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FIK STORE</title>
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #f9f9f9; color: #333; }
     header { background: #0b60b0; color: white; padding: 1rem; text-align: center; }
+    header .logo { height: 100px; }
+    header h1 { margin: 0.5rem 0 0.2rem; }
     main { padding: 1rem; }
-    .produk { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-    .produk img { width: 100%; max-width: 200px; border-radius: 8px; }
-    button { background: #0b60b0; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
-    #checkout-form { display: none; background: white; padding: 1rem; border-radius: 10px; margin-top: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input, select { width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
-    footer { text-align: center; padding: 1rem; font-size: 0.9rem; color: #555; }
+    .produk {
+      background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .produk img { max-width: 100%; border-radius: 10px; }
+    .produk h2 { margin-top: 0; }
+    button {
+      background: #0b60b0; color: white; padding: 0.5rem 1rem;
+      border: none; border-radius: 5px; cursor: pointer; margin-top: 0.5rem;
+    }
+    select { width: 100%; padding: 0.5rem; margin-top: 0.5rem; border-radius: 5px; }
+    .detail-pembayaran img { max-width: 200px; margin-top: 10px; }
+    .detail-pembayaran p { margin: 0.5rem 0; }
+    footer { text-align: center; padding: 1rem; background: #eee; margin-top: 2rem; font-size: 0.9rem; color: #888; }
   </style>
 </head>
 <body>
   <header>
+    <img src="logo-fikstore.png" alt="FIK STORE Logo" class="logo">
     <h1>FIK STORE</h1>
   </header>
   <main>
-    <div id="produk-container"></div><div id="checkout-form">
-  <h2>Checkout</h2>
-  <p id="selected-product"></p>
-  <input type="text" id="nama" placeholder="Nama Anda" required>
-  <input type="tel" id="nomor" placeholder="Nomor WhatsApp" required>
-  <select id="metode">
-    <option value="QRIS">QRIS</option>
-    <option value="DANA">DANA</option>
-    <option value="GOPAY">GOPAY</option>
-  </select>
-  <input type="text" id="linkBukti" placeholder="Link Gambar Bukti Transfer (contoh dari Imgur)" required>
-  <button onclick="kirimTransaksi()">Kirim Bukti</button>
-  <p id="status-upload"></p>
-</div>
-
+    <section class="produk">
+      <h2>Contoh Produk</h2>
+      <img src="https://via.placeholder.com/200" alt="Produk">
+      <p>Deskripsi produk singkat.</p>
+      <p>Harga: Rp5.000</p>
+      <button class="checkout">Checkout</button>
+      <div class="pembayaran" style="display:none; margin-top: 10px;">
+        <label>Pilih Metode Pembayaran:</label>
+        <select class="metode-pembayaran">
+          <option value="">-- Pilih --</option>
+          <option value="qris">QRIS</option>
+          <option value="dana">DANA</option>
+          <option value="gopay">GoPay</option>
+        </select>
+        <div class="detail-pembayaran"></div>
+      </div>
+    </section>
   </main>
   <footer>
-    &copy; 2025 FIK STORE
-  </footer>  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    &copy; FIK STORE | FIK OFFICIAL
+  </footer>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
-      authDomain: "fikstore-id.firebaseapp.com",
-      projectId: "fikstore-id",
-      storageBucket: "fikstore-id.appspot.com",
-      messagingSenderId: "323293742570",
-      appId: "1:323293742570:web:5de4906939fd19d6ec9e93",
-      databaseURL: "https://fikstore-id-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
+  <script>
+    document.querySelectorAll("button.checkout").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const section = btn.closest(".produk");
+        const pembayaran = section.querySelector(".pembayaran");
+        pembayaran.style.display = "block";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app);
+        const metode = pembayaran.querySelector(".metode-pembayaran");
+        const detail = pembayaran.querySelector(".detail-pembayaran");
 
-    const produkContainer = document.getElementById("produk-container");
-    const selectedProductEl = document.getElementById("selected-product");
-    let selectedProduct = null;
-
-    async function loadProduk() {
-      const snapshot = await getDocs(collection(db, "products"));
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.className = "produk";
-        div.innerHTML = `
-          <h3>${data.name}</h3>
-          <p>${data.description}</p>
-          <p>Harga: Rp${data.discount ?? data.price}</p>
-          <img src="${data.imageUrl}" alt="${data.name}" />
-          <br><br>
-          <button onclick="checkout('${doc.id}', '${data.name}', ${data.discount ?? data.price})">Checkout</button>
-        `;
-        produkContainer.appendChild(div);
+        metode.onchange = () => {
+          if (metode.value === "qris") {
+            detail.innerHTML = `<img src="qris.png" alt="QRIS">`;
+          } else if (metode.value === "dana") {
+            detail.innerHTML = `
+              <p>Nomor DANA: <span id="nomor-dana">087811955247</span></p>
+              <button onclick="salin('087811955247')">Salin Nomor</button>
+            `;
+          } else if (metode.value === "gopay") {
+            detail.innerHTML = `
+              <p>Nomor GoPay: <span id="nomor-gopay">087811955247</span></p>
+              <button onclick="salin('087811955247')">Salin Nomor</button>
+            `;
+          } else {
+            detail.innerHTML = "";
+          }
+        };
       });
+    });
+
+    function salin(nomor) {
+      navigator.clipboard.writeText(nomor).then(() => alert("Nomor disalin!"));
     }
-
-    window.checkout = function(id, name, harga) {
-      selectedProduct = { id, name, harga };
-      document.getElementById("checkout-form").style.display = "block";
-      selectedProductEl.innerText = `Produk: ${name} - Rp${harga}`;
-    }
-
-    window.kirimTransaksi = async function () {
-      const nama = document.getElementById("nama").value;
-      const nomor = document.getElementById("nomor").value;
-      const metode = document.getElementById("metode").value;
-      const linkBukti = document.getElementById("linkBukti").value;
-      const status = document.getElementById("status-upload");
-
-      if (!nama || !nomor || !linkBukti || !selectedProduct) {
-        status.innerText = "Harap lengkapi semua data.";
-        return;
-      }
-
-      const transaksiRef = push(ref(rtdb, 'transaksi'));
-      await set(transaksiRef, {
-        nama,
-        nomor,
-        metode,
-        produk: selectedProduct.name,
-        harga: selectedProduct.harga,
-        bukti: linkBukti,
-        waktu: new Date().toISOString(),
-        status: "Menunggu"
-      });
-
-      status.innerText = "Bukti berhasil dikirim.";
-      document.getElementById("checkout-form").reset();
-      document.getElementById("checkout-form").style.display = "none";
-    }
-
-    loadProduk();
-  </script></body>
+  </script>
+</body>
 </html>
