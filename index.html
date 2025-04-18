@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -36,7 +37,6 @@
       background: white;
       border-radius: 10px;
       padding: 1rem;
-      margin-bottom: 1.5rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
     .produk img {
@@ -74,6 +74,12 @@
       font-size: 0.9rem;
       color: #888;
     }
+    #produk-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -91,13 +97,19 @@
       <button onclick="uploadBukti()">Upload Bukti</button>
       <p id="upload-status"></p>
     </section>
+
+    <section id="produk-list"></section>
   </main>
+
   <footer>
     &copy; FIK STORE | FIK OFFICIAL
-  </footer>  <!-- Firebase SDK -->  <script type="module">
+  </footer>
+
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
     import { getDatabase, ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
@@ -112,6 +124,7 @@
     const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
     const database = getDatabase(app);
+    const firestore = getFirestore(app);
 
     window.uploadBukti = async function () {
       const nama = document.getElementById("nama").value;
@@ -146,5 +159,29 @@
         status.innerText = "Terjadi kesalahan saat upload.";
       }
     }
-  </script></body>
+
+    async function tampilkanProduk() {
+      const produkList = document.getElementById("produk-list");
+      const querySnapshot = await getDocs(collection(firestore, "products"));
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const image = data.image || "https://via.placeholder.com/300x200?text=No+Image";
+        const harga = data.discountPrice || data.price;
+
+        const html = `
+          <div class="produk">
+            <img src="${image}" alt="${data.name}">
+            <h2>${data.name}</h2>
+            <p>${data.description || ""}</p>
+            <p><strong>Harga: Rp${harga}</strong></p>
+          </div>
+        `;
+        produkList.innerHTML += html;
+      });
+    }
+
+    tampilkanProduk();
+  </script>
+</body>
 </html>
