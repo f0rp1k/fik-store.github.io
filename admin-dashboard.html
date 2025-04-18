@@ -1,95 +1,137 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - FIK STORE</title>
+  <title>Dashboard Admin - FIK STORE</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      color: #0b60b0;
+    }
+    form input, form textarea {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 400px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #0b60b0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #094a87;
+    }
+    #product-list div {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    img {
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+  </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";const firebaseConfig = {
-  apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
-  authDomain: "fikstore-id.firebaseapp.com",
-  projectId: "fikstore-id",
-  storageBucket: "fikstore-id.appspot.com",
-  messagingSenderId: "323293742570",
-  appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
-};
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const productsCol = collection(db, "products");
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+      authDomain: "fikstore-id.firebaseapp.com",
+      projectId: "fikstore-id",
+      storageBucket: "fikstore-id.appspot.com",
+      messagingSenderId: "323293742570",
+      appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
+    };
 
-const productList = document.getElementById("product-list");
-const form = document.getElementById("add-product-form");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productsCol = collection(db, "products");
 
-async function loadProducts() {
-  productList.innerHTML = "";
-  const snapshot = await getDocs(productsCol);
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <strong>${data.name}</strong><br>
-      ${data.description}<br>
-      Harga: Rp${data.price} ${data.discount ? `(Diskon: Rp${data.discount})` : ""}<br>
-      <img src="${data.imageUrl}" width="100"><br>
-      <button onclick="editProduct('${docSnap.id}', '${data.name}', '${data.description}', ${data.price}, ${data.discount ?? 0}, '${data.imageUrl}')">Edit</button>
-      <button onclick="deleteProduct('${docSnap.id}')">Hapus</button>
-      <hr>
-    `;
-    productList.appendChild(div);
-  });
-}
+    const productList = document.getElementById("product-list");
+    const form = document.getElementById("add-product-form");
 
-window.editProduct = function(id, name, description, price, discount, imageUrl) {
-  document.getElementById("product-id").value = id;
-  form.name.value = name;
-  form.description.value = description;
-  form.price.value = price;
-  form.discount.value = discount || "";
-  form.imageUrl.value = imageUrl;
-  document.getElementById("submit-btn").innerText = "Update Produk";
-}
+    async function loadProducts() {
+      productList.innerHTML = "";
+      const snapshot = await getDocs(productsCol);
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <strong>${data.name}</strong><br>
+          ${data.description}<br>
+          Harga: Rp${data.price} ${data.discountPrice ? `(Diskon: Rp${data.discountPrice})` : ""}<br>
+          <img src="${data.imageUrl}" width="100"><br>
+          <button onclick="editProduct('${docSnap.id}', '${data.name}', '${data.description}', ${data.price}, ${data.discountPrice ?? 0}, '${data.imageUrl}')">Edit</button>
+          <button onclick="deleteProduct('${docSnap.id}')">Hapus</button>
+        `;
+        productList.appendChild(div);
+      });
+    }
 
-window.deleteProduct = async function(id) {
-  if (confirm("Yakin ingin menghapus produk?")) {
-    await deleteDoc(doc(productsCol, id));
+    window.editProduct = function(id, name, description, price, discountPrice, imageUrl) {
+      document.getElementById("product-id").value = id;
+      form.name.value = name;
+      form.description.value = description;
+      form.price.value = price;
+      form.discount.value = discountPrice || "";
+      form.imageUrl.value = imageUrl;
+      document.getElementById("submit-btn").innerText = "Update Produk";
+    }
+
+    window.deleteProduct = async function(id) {
+      if (confirm("Yakin ingin menghapus produk?")) {
+        await deleteDoc(doc(db, "products", id));
+        loadProducts();
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("product-id").value;
+      const data = {
+        name: form.name.value,
+        description: form.description.value,
+        price: Number(form.price.value),
+        discountPrice: form.discount.value ? Number(form.discount.value) : null,
+        imageUrl: form.imageUrl.value,
+      };
+      if (id) {
+        await updateDoc(doc(db, "products", id), data);
+      } else {
+        await addDoc(productsCol, data);
+      }
+      form.reset();
+      document.getElementById("submit-btn").innerText = "Tambah Produk";
+      loadProducts();
+    });
+
     loadProducts();
-  }
-}
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("product-id").value;
-  const data = {
-    name: form.name.value,
-    description: form.description.value,
-    price: Number(form.price.value),
-    discount: form.discount.value ? Number(form.discount.value) : null,
-    imageUrl: form.imageUrl.value,
-  };
-  if (id) {
-    await updateDoc(doc(productsCol, id), data);
-  } else {
-    await addDoc(productsCol, data);
-  }
-  form.reset();
-  document.getElementById("submit-btn").innerText = "Tambah Produk";
-  loadProducts();
-});
-
-loadProducts();
-
   </script>
 </head>
 <body>
   <h1>Dashboard Admin - FIK STORE</h1>
   <form id="add-product-form">
     <input type="hidden" id="product-id">
-    <input type="text" name="name" placeholder="Nama Produk" required><br>
-    <textarea name="description" placeholder="Deskripsi" required></textarea><br>
-    <input type="number" name="price" placeholder="Harga" required><br>
-    <input type="number" name="discount" placeholder="Harga Diskon (Opsional)"><br>
-    <input type="text" name="imageUrl" placeholder="Link Gambar (URL)" required><br>
+    <input type="text" name="name" placeholder="Nama Produk" required>
+    <textarea name="description" placeholder="Deskripsi Produk" required></textarea>
+    <input type="number" name="price" placeholder="Harga (Rp)" required>
+    <input type="number" name="discount" placeholder="Harga Diskon (Opsional)">
+    <input type="text" name="imageUrl" placeholder="Link Gambar (URL)" required>
     <button id="submit-btn" type="submit">Tambah Produk</button>
   </form>
   <hr>
