@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+</head>
+<body>
+
+    <h2>Admin Dashboard</h2>
+
+    <!-- Form untuk tambah produk -->
+    <div>
+        <h3>Tambah Produk</h3>
+        <form id="addProductForm">
+            <input type="text" id="productName" placeholder="Nama Produk" required>
+            <input type="text" id="productDesc" placeholder="Deskripsi Produk" required>
+            <input type="number" id="productPrice" placeholder="Harga Produk" required>
+            <input type="number" id="productDiscount" placeholder="Harga Diskon (opsional)">
+            <input type="file" id="productImage" accept="image/*" required>
+            <button type="submit">Tambah Produk</button>
+        </form>
+    </div>
+
+    <!-- Daftar Produk -->
+    <div>
+        <h3>Daftar Produk</h3>
+        <ul id="productList"></ul>
+    </div>
+
+    <!-- Daftar Transaksi -->
+    <div>
+        <h3>Daftar Transaksi</h3>
+        <table id="transactionList">
+            <tr>
+                <th>Nama</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </table>
+    </div>
+
+    <script type="module">
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
+            authDomain: "fikstore-id.firebaseapp.com",
+            projectId: "fikstore-id",
+            storageBucket: "fikstore-id.appspot.com",
+            messagingSenderId: "323293742570",
+            appId: "1:323293742570:web:5de4906939fd19d6ec9e93"
+        };
+
+        // Initialize Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        const addProductForm = document.getElementById("addProductForm");
+        const productList = document.getElementById("productList");
+        const transactionList = document.getElementById("transactionList");
+
+        // Tambahkan produk
+        addProductForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById("productName").value;
+            const desc = document.getElementById("productDesc").value;
+            const price = document.getElementById("productPrice").value;
+            const discount = document.getElementById("productDiscount").value;
+            const file = document.getElementById("productImage").files[0];
+            
+            if (file) {
+                const storageRef = ref(storage, 'products/' + file.name);
+                await uploadBytes(storageRef, file);
+                const imageURL = await getDownloadURL(storageRef);
+
+                await addDoc(collection(db, "products"), {
+                    name,
+                    description: desc,
+                    price,
+                    discount,
+                    image: imageURL
+                });
+
+                loadProducts();
+            }
+        });
+
+        // Ambil dan tampilkan produk
+        const loadProducts = async () => {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            productList.innerHTML = "";
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <div>
+                        <img src="${data.image}" alt="Product Image" width="50" height="50">
+                        <p>${data.name}</p>
+                        <p>${data.description}</p>
+                        <p>Rp ${data.price}</p>
+                        <p>Diskon: Rp ${data.discount || '0'}</p>
+                        <button onclick="deleteProduct('${doc.id}')">Hapus</button>
+                    </div>
+                `;
+                productList.appendChild(listItem);
+            });
+        };
+
+        // Hapus produk
+        const deleteProduct = async (id) => {
+            await deleteDoc(doc(db, "products", id));
+            loadProducts();
+        };
+
+        // Kelola transaksi
+        const loadTransactions = async () => {
+            const querySnapshot = await getDocs(collection(db, "transactions"));
+            transactionList.innerHTML = "<tr><th>Nama</th><th>Status</th><th>Aksi</th></tr>";
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${data.name}</td>
+                    <td>
+                        <select onchange="updateTransactionStatus('${doc.id}', this.value)">
+                            <option value="Menunggu" ${data.status === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
+                            <option value="Proses" ${data.status === 'Proses' ? 'selected' : ''}>Proses</option>
+                            <option value="Selesai" ${data.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                    </td>
+                    <td><button onclick="deleteTransaction('${doc.id}')">Hapus</button></td>
+                `;
+                transactionList.appendChild(row);
+            });
+        };
+
+        // Update status transaksi
+        const updateTransactionStatus = async (id, status) => {
+            await updateDoc(doc(db, "transactions", id), {
+                status
+            });
+        };
+
+        // Hapus transaksi
+        const deleteTransaction = async (id) => {
+            await deleteDoc(doc(db, "transactions", id));
+            loadTransactions();
+        };
+
+        // Muat data produk dan transaksi saat pertama kali
+        loadProducts();
+        loadTransactions();
+    </script>
+
+</body>
+</html>
