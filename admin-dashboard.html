@@ -5,49 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Admin - FIK STORE</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-    }
-    h1 {
-      color: #0b60b0;
-    }
-    form input, form textarea {
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    h1, h2 { color: #0b60b0; }
+    form input, form textarea, select {
       display: block;
       margin-bottom: 10px;
-      width: 100%;
-      max-width: 400px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      width: 100%; max-width: 400px;
+      padding: 8px; border: 1px solid #ccc; border-radius: 5px;
     }
     button {
       padding: 8px 16px;
-      background-color: #0b60b0;
-      color: white;
-      border: none;
-      border-radius: 5px;
+      background-color: #0b60b0; color: white;
+      border: none; border-radius: 5px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #094a87;
-    }
-    #product-list div {
+    button:hover { background-color: #094a87; }
+    #product-list div, #transaction-list div {
       background: white;
       padding: 15px;
       margin-bottom: 15px;
       border-radius: 10px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-    img {
-      border-radius: 5px;
-      margin-top: 5px;
-    }
+    img { border-radius: 5px; margin-top: 5px; }
   </style>
+</head>
+<body>
+  <h1>Dashboard Admin - FIK STORE</h1>
+
+  <form id="add-product-form">
+    <input type="hidden" id="product-id">
+    <input type="text" name="name" placeholder="Nama Produk" required>
+    <textarea name="description" placeholder="Deskripsi Produk" required></textarea>
+    <input type="number" name="price" placeholder="Harga (Rp)" required>
+    <input type="number" name="discount" placeholder="Harga Diskon (Opsional)">
+    <input type="text" name="imageUrl" placeholder="Link Gambar (URL)" required>
+    <button id="submit-btn" type="submit">Tambah Produk</button>
+  </form>
+
+  <hr>
+  <h2>Daftar Produk</h2>
+  <div id="product-list">Memuat produk...</div>
+
+  <hr>
+  <h2>Transaksi Pembeli</h2>
+  <div id="transaction-list">Memuat transaksi...</div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      getFirestore, collection, getDocs, addDoc,
+      updateDoc, deleteDoc, doc
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      getDatabase, ref, onValue, update
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC5aNVM7c2eUd5P-0k8jZCKhgBNWFcKO-c",
@@ -60,8 +72,10 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const productsCol = collection(db, "products");
+    const rtdb = getDatabase(app);
 
+    // --- Produk ---
+    const productsCol = collection(db, "products");
     const productList = document.getElementById("product-list");
     const form = document.getElementById("add-product-form");
 
@@ -111,7 +125,7 @@
         imageUrl: form.imageUrl.value,
       };
       if (id) {
-        await updateDoc(doc(db, "products", id), data);
+        await updateDoc(doc(productsCol, id), data);
       } else {
         await addDoc(productsCol, data);
       }
@@ -121,20 +135,44 @@
     });
 
     loadProducts();
+
+    // --- Transaksi ---
+    const transactionsRef = ref(rtdb, "transactions");
+    const transactionList = document.getElementById("transaction-list");
+
+    function renderTransactions(snapshot) {
+      const data = snapshot.val();
+      transactionList.innerHTML = "";
+      if (!data) {
+        transactionList.innerHTML = "Belum ada transaksi.";
+        return;
+      }
+
+      Object.entries(data).forEach(([id, trx]) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <strong>Nama:</strong> ${trx.name}<br>
+          <strong>WhatsApp:</strong> ${trx.whatsapp}<br>
+          <strong>Produk:</strong> ${trx.product}<br>
+          <strong>Bukti Transfer:</strong> <a href="${trx.proof}" target="_blank">Lihat</a><br>
+          <strong>Status:</strong> ${trx.status}<br>
+          <select onchange="updateStatus('${id}', this.value)">
+            <option value="Menunggu" ${trx.status === "Menunggu" ? "selected" : ""}>Menunggu</option>
+            <option value="Diproses" ${trx.status === "Diproses" ? "selected" : ""}>Diproses</option>
+            <option value="Selesai" ${trx.status === "Selesai" ? "selected" : ""}>Selesai</option>
+          </select>
+        `;
+        transactionList.appendChild(div);
+      });
+    }
+
+    onValue(transactionsRef, renderTransactions);
+
+    window.updateStatus = async function (id, newStatus) {
+      const trxRef = ref(rtdb, "transactions/" + id);
+      await update(trxRef, { status: newStatus });
+      alert("Status diperbarui.");
+    };
   </script>
-</head>
-<body>
-  <h1>Dashboard Admin - FIK STORE</h1>
-  <form id="add-product-form">
-    <input type="hidden" id="product-id">
-    <input type="text" name="name" placeholder="Nama Produk" required>
-    <textarea name="description" placeholder="Deskripsi Produk" required></textarea>
-    <input type="number" name="price" placeholder="Harga (Rp)" required>
-    <input type="number" name="discount" placeholder="Harga Diskon (Opsional)">
-    <input type="text" name="imageUrl" placeholder="Link Gambar (URL)" required>
-    <button id="submit-btn" type="submit">Tambah Produk</button>
-  </form>
-  <hr>
-  <div id="product-list"></div>
 </body>
 </html>
